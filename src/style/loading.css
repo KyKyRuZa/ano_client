@@ -1,0 +1,91 @@
+/* loading.css */
+body,
+html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+.animate-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #BC0308;
+  z-index: 9999;
+  transition: opacity 0.5s ease-out;
+}
+
+.canvas-container {
+  position: relative;
+  width: 500px;
+  height: 500px;
+}
+
+.canvas {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+}
+
+.hart {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+
+
+/* Основной контент */
+.main-content {
+  position: absolute;
+  width: 100%;
+  top: 0px;
+  opacity: 0; /* Начальная прозрачность */
+  transition: opacity 1s ease-in-out; /* Плавное появление */
+  visibility: hidden; /* Скрываем контент до появления */
+}
+
+.main-content.fade-in {
+  opacity: 1; /* Полная видимость */
+  visibility: visible; /* Показываем контент */
+}
+
+@media (max-width: 1024px) {
+  .canvas-container {
+    width: 500px;
+    height:500px;
+  }
+}
+
+@media (max-width: 768px) {
+  .canvas-container {
+    width: 500px;
+    height: 500px;
+  }
+}
+
+@media (max-width: 480px) {
+  .canvas-container {
+    width: 400px;
+    height: 400px;
+  }
+  
+  .hart {
+    width: 200px;
+    height: 200px;
+  }
+}

@@ -1,0 +1,30 @@
+
+.staff-page {
+    max-width: 1200px;
+    margin: 120px auto;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .staff-page h1 {
+    margin: 40px 0px;
+  }
+  
+  .staff-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .staff-table th,
+  .staff-table td {
+    padding: 8px;
+    text-align: left;
+  }
+  
+  .staff-table th {
+    border-bottom: 2px solid #ccc;
+  }
+  
+  .staff-table td {
+    border-bottom: 1px solid #eee;
+  }
