@@ -11,15 +11,27 @@ export const fetchMessages = async () => {
 
       // Обрабатываем одиночные медиа файлы
       if (message.media_url) {
-        processedMessage.media_url = message.media_url.startsWith('http') 
-          ? message.media_url 
-          : `${API_BASE_URL}${message.media_url}`;
+        if (message.media_url.startsWith('http')) {
+          processedMessage.media_url = message.media_url;
+        } else {
+          // Добавляем слэш если его нет в начале пути
+          const path = message.media_url.startsWith('/') ? message.media_url : `/${message.media_url}`;
+          processedMessage.media_url = `${API_BASE_URL}${path}`;
+        }
       }
 
       // Обрабатываем группы медиа файлов
       if (message.media_urls && Array.isArray(message.media_urls)) {
         processedMessage.media_urls = message.media_urls.map(url => {
-          return url && url.startsWith('http') ? url : `${API_BASE_URL}${url}`;
+          if (!url) return url;
+          
+          if (url.startsWith('http')) {
+            return url;
+          } else {
+            // Добавляем слэш если его нет в начале пути
+            const path = url.startsWith('/') ? url : `/${url}`;
+            return `${API_BASE_URL}${path}`;
+          }
         });
       }
 
