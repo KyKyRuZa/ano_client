@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://anotsenimzhizn.ru/';
+const API_BASE_URL = 'http://anotsenimzhizn.ru';
 
 export const fetchMessages = async () => {
   try {
