@@ -22,7 +22,8 @@ function MessageList() {
   const [playingStates, setPlayingStates] = useState({});
   const [audioVolume, setAudioVolume] = useState(1);
   const [audioProgress, setAudioProgress] = useState({});
-  const [audioDurations, setAudioDurations] = useState({}); // Изменено на объект
+  const [audioDurations, setAudioDurations] = useState({});
+  
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   
@@ -31,7 +32,7 @@ function MessageList() {
   
   const [mediaGroupCurrentIndex, setMediaGroupCurrentIndex] = useState({});
 
-  const messagesPerPage = 4;
+  const messagesPerPage = 5;
 
   useEffect(() => {
     const getMessages = async () => {
