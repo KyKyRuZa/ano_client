@@ -29,11 +29,6 @@ const Header = () => {
             Проекты
             <div className={`dropdown-menu ${activeDropdown === 'projects' ? 'show' : ''}`}>
               <Link to="/project/1">проект «ПОШИВОЧНЫЙ ЦЕХ»</Link>
-              <Link to="/project/2">проект группа «А»</Link>
-              <Link to="/project/3">проект психологов «ЗНАКИ СВЕТА»</Link>
-              <Link to="/project/4">проект «ЛИНГВИСТЫ»</Link>
-              <Link to="/project/5">проект «БИБЛИОТЕКА»</Link>
-              <Link to="/project/6">проект «НАУКА»</Link>
 
             </div>
           </Link>
@@ -44,10 +39,7 @@ const Header = () => {
           >
             Программы
             <div className={`dropdown-menu ${activeDropdown === 'programs' ? 'show' : ''}`}>
-                  <Link to="/program/1">НАСТАВНИЧЕСТВО</Link>
-                  <Link to="/program/2">СОЦИАЛЬНАЯ БЕЗОПАСНОСТЬ</Link>
-                  <Link to="/program/3">МЕДИА БЕЗОПАСНОСТИ И МЕДИА ГИГИЕНЫ</Link>
-                  <Link to="/program/4">ДУХОВНО–НРАВСТВЕННОЕ И ГРАЖДАНСКО-ПАТРИОТИЧЕСКОГО ВОСПИТАНИЕ</Link>
+
             </div>
           </Link>
           <Link className='link' to="/personal/">
@@ -61,7 +53,7 @@ const Header = () => {
         
         <div className="contact-info">
           <a href="tel:+79274819037">+7-927-481-90-37</a>
-          <Link to="admin/staff">Link</Link>
+          <Link to="/admin/staff">Link</Link>
         </div>
       </nav>
     </header>
