@@ -1,17 +1,20 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTelegram, faVk, faYoutube } from '@fortawesome/free-brands-svg-icons';
-import logo from '../style/assets/logo.svg';
 import rutub from '../style/assets/Rutube_icon.svg';
 import QR from '../style/assets/QR.png';
+import KUI from '../style/assets/KUI.png';
+
 
 const Footer = () => {
-
   return(
     <footer className="footer">
       <div className="footer-container">
-        <div className="footer-logo-section">
-          <img src={logo} alt="Logo" className="footer-banner" />
+        <div className="footer-left">
+          <img src={KUI} alt="KUI Logo" className="KUI" />
+          <p>Сайт создан студентами университета Казанский инновационный университет имени В.Г. Тимирясова (ИЭУП)</p>
+          <span>Социальные сети АНБО:</span>
           <div className="footer-social">
+             
             <a href="https://t.me/cenim_zhizn" target="_blank" rel="noopener noreferrer">
               <FontAwesomeIcon icon={faTelegram} />
             </a>
@@ -25,15 +28,14 @@ const Footer = () => {
                 <img src={rutub} alt="rutube" className="rutube" />
             </a>
           </div>
-          <p>Сайт создан студентами университета КИУ</p>
+          
         </div>
-        <div className='QR'>
-          <div className='QR-container'> 
-            <img src={QR} alt="QR" className="footer-QR" />
-            <p>пожертвовать</p>
-          </div>
-         
+       
+        <div className='QR-container'> 
+          <img src={QR} alt="QR" className="footer-QR" />
+          <p>пожертвовать</p>
         </div>
+
         <div className="footer-requisites">
           <p>Реквизиты:</p>
           <ul>
@@ -53,6 +55,7 @@ const Footer = () => {
           </ul>
         </div>
       </div>
+
       <div className="social-icons">
         <p>© 2023 АНБО "Ценим жизнь"</p>
       </div>

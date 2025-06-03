@@ -388,8 +388,6 @@ function MessageList() {
 
   return (
     <div className="message-list-container">
-      <h2>Новости и объявления</h2>
-      
       <div className="message-list">
         {getCurrentPageMessages().map((message, index) => (
           <div 
