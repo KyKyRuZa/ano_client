@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://anotsenimzhizn.ru';
+const API_BASE_URL = 'https://anotsenimzhizn.ru';
 
 export const fetchMessages = async () => {
   try {
@@ -11,7 +11,7 @@ export const fetchMessages = async () => {
 
       // Обрабатываем одиночные медиа файлы
       if (message.media_url) {
-        if (message.media_url.startsWith('http')) {
+        if (message.media_url.startsWith('https')) {
           processedMessage.media_url = message.media_url;
         } else {
           // Добавляем слэш если его нет в начале пути
@@ -25,7 +25,7 @@ export const fetchMessages = async () => {
         processedMessage.media_urls = message.media_urls.map(url => {
           if (!url) return url;
           
-          if (url.startsWith('http')) {
+          if (url.startsWith('https')) {
             return url;
           } else {
             // Добавляем слэш если его нет в начале пути
