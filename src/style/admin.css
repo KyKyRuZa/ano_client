@@ -25,3 +25,55 @@
 .nav-item:hover{
     background-color: #c0999a;
 }
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: fixed;
+        top: 0;
+        left: -100%;
+        z-index: 1000;
+        transition: left 0.3s ease;
+    }
+    
+    .sidebar.mobile-open {
+        left: 0;
+    }
+    
+    .admin-logo {
+        width: 120px;
+        height: 120px;
+        margin: 20px auto;
+        display: block;
+    }
+    
+    .nav-header span {
+        font-size: 24px;
+        padding: 15px 20px;
+    }
+    
+    .nav-item {
+        padding: 15px 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+}
+
+@media (max-width: 480px) {
+    .admin-logo {
+        width: 100px;
+        height: 100px;
+        margin: 15px auto;
+    }
+    
+    .nav-header span {
+        font-size: 20px;
+        padding: 12px 15px;
+    }
+    
+    .nav-item {
+        padding: 12px 15px;
+        font-size: 14px;
+    }
+}
