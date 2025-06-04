@@ -56,12 +56,15 @@
 }
 
 .burger-bar-admin {
-  width: 24px;
+  display: block;
+  width: 25px;
   height: 3px;
-  background-color: white;
+  background-color: black;
   transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   border-radius: 2px;
   transform-origin: center;
+    margin: 5px auto;
+
 }
 
 /* Красивая анимация крестика */
@@ -210,16 +213,4 @@
 /* Дополнительные стили для плавности */
 .sidebar * {
     transition: all 0.3s ease;
-}
-
-
-@keyframes slideInFromRight {
-    from {
-        opacity: 0;
-        transform: translateX(50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
 }
