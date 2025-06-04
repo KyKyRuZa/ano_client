@@ -6,6 +6,7 @@ import '../style/admin.css';
 import StaffPage from './AdminPages/StaffPage';
 import ProgramsPage from './AdminPages/ProgramsPage';
 import ProjectsPage from './AdminPages/ProjectsPage';
+import Login from '../components/Login';
 
 const NavItem = ({ text, path }) => {
   const navigate = useNavigate();
@@ -49,15 +50,43 @@ const Navbar = () => {
 };
 
 const AdminLayout = () => {
+  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  const [isAnimatingOut, setIsAnimatingOut] = React.useState(false);
+
+
+  const handleLogin = (success) => {
+    if (success) {
+      setIsAnimatingOut(true); // Запускаем анимацию исчезновения
+
+      // Ждём завершения анимации перед переходом
+      setTimeout(() => {
+        localStorage.setItem('isAdmin', 'true');
+        setIsLoggedIn(true);
+      }, 300); // Соответствует длительности анимации в CSS
+    }
+  };
+
   return (
     <div className="admin-layout">
       <Navbar />
+
       <div className="admin-content">
-        <Routes>
-          <Route path="staff" element={<StaffPage />} />
-          <Route path="programs" element={<ProgramsPage />} />
-          <Route path="projects" element={<ProjectsPage />} />
-        </Routes>
+         {/* Форма входа с анимацией выхода */}
+        {!isLoggedIn && (
+          <div className={`login-wrapper ${isAnimatingOut ? 'login-exit-animation' : ''}`}>
+            <Login onLogin={handleLogin}/>
+          </div>
+        )}
+
+        {isLoggedIn && (
+          <div className="fade-container enter">
+            <Routes>
+              <Route path="staff" element={<StaffPage />} />
+              <Route path="programs" element={<ProgramsPage />} />
+              <Route path="projects" element={<ProjectsPage />} />
+            </Routes>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import React from 'react';
-import '../style/app.css';
+import '../style/project.css';
 import projectImage from '../style/assets/p-1.png';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
