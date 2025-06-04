@@ -8,11 +8,12 @@ import ProgramsPage from './AdminPages/ProgramsPage';
 import ProjectsPage from './AdminPages/ProjectsPage';
 import Login from '../components/Login';
 
-const NavItem = ({ text, path }) => {
+const NavItem = ({ text, path, onClick }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
     navigate(path);
+    if (onClick) onClick(); // Закрываем мобильное меню при клике на пункт
   };
 
   return (
@@ -32,7 +33,7 @@ const Navbar = ({ isOpen, toggleMenu }) => {
   return (
     <div className={`sidebar ${isOpen ? 'mobile-open' : ''}`}>
       <div className="sidebar-header">
-        <Link to="/">
+        <Link to="/" onClick={toggleMenu}>
           <img src={logo} alt="Banner" className="admin-logo" />
         </Link>
       </div>
@@ -41,7 +42,12 @@ const Navbar = ({ isOpen, toggleMenu }) => {
         <div className="nav-header">
           <span>Меню навигации</span>
           {navItems.map((item, index) => (
-            <NavItem key={index} text={item.text} path={item.path} />
+            <NavItem 
+              key={index} 
+              text={item.text} 
+              path={item.path} 
+              onClick={toggleMenu}
+            />
           ))}
         </div>
       </nav>
@@ -60,13 +66,12 @@ const AdminLayout = () => {
 
   const handleLogin = (success) => {
     if (success) {
-      setIsAnimatingOut(true); // Запускаем анимацию исчезновения
+      setIsAnimatingOut(true);
 
-      // Ждём завершения анимации перед переходом
       setTimeout(() => {
         localStorage.setItem('isAdmin', 'true');
         setIsLoggedIn(true);
-      }, 300); // Соответствует длительности анимации в CSS
+      }, 300);
     }
   };
 
@@ -74,20 +79,27 @@ const AdminLayout = () => {
     <div className="admin-layout">
       {/* Burger menu button for mobile */}
       {isLoggedIn && (
-        <button className="mobile-menu-btn" onClick={toggleMobileMenu}>
-          <span className={`burger-bar ${isMobileMenuOpen ? 'open' : ''}`}></span>
-          <span className={`burger-bar ${isMobileMenuOpen ? 'open' : ''}`}></span>
-          <span className={`burger-bar ${isMobileMenuOpen ? 'open' : ''}`}></span>
+        <button 
+          className={`mobile-menu-btn ${isMobileMenuOpen ? 'open' : ''}`} 
+          onClick={toggleMobileMenu}
+        >
+          <span className="burger-bar"></span>
+          <span className="burger-bar"></span>
+          <span className="burger-bar"></span>
         </button>
       )}
 
       <Navbar isOpen={isMobileMenuOpen} toggleMenu={toggleMobileMenu} />
 
       {/* Mobile overlay */}
-      {isMobileMenuOpen && <div className="mobile-overlay" onClick={toggleMobileMenu}></div>}
+      {isMobileMenuOpen && (
+        <div 
+          className={`mobile-overlay ${isMobileMenuOpen ? 'show' : ''}`} 
+          onClick={toggleMobileMenu}
+        />
+      )}
 
       <div className="admin-content">
-         {/* Форма входа с анимацией выхода */}
         {!isLoggedIn && (
           <div className={`login-wrapper ${isAnimatingOut ? 'login-exit-animation' : ''}`}>
             <Login onLogin={handleLogin}/>
