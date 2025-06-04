@@ -22,7 +22,7 @@ const NavItem = ({ text, path }) => {
   );
 };
 
-const Navbar = () => {
+const Navbar = ({ isOpen, toggleMenu }) => {
   const navItems = [
     { text: 'Персонал', path: '/admin/staff' },
     { text: 'Программы', path: '/admin/programs' },
@@ -30,7 +30,7 @@ const Navbar = () => {
   ];
 
   return (
-    <div className={`sidebar`}>
+    <div className={`sidebar ${isOpen ? 'mobile-open' : ''}`}>
       <div className="sidebar-header">
         <Link to="/">
           <img src={logo} alt="Banner" className="admin-logo" />
@@ -52,7 +52,11 @@ const Navbar = () => {
 const AdminLayout = () => {
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
   const [isAnimatingOut, setIsAnimatingOut] = React.useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
 
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
 
   const handleLogin = (success) => {
     if (success) {
@@ -68,7 +72,19 @@ const AdminLayout = () => {
 
   return (
     <div className="admin-layout">
-      <Navbar />
+      {/* Burger menu button for mobile */}
+      {isLoggedIn && (
+        <button className="mobile-menu-btn" onClick={toggleMobileMenu}>
+          <span className={`burger-bar ${isMobileMenuOpen ? 'open' : ''}`}></span>
+          <span className={`burger-bar ${isMobileMenuOpen ? 'open' : ''}`}></span>
+          <span className={`burger-bar ${isMobileMenuOpen ? 'open' : ''}`}></span>
+        </button>
+      )}
+
+      <Navbar isOpen={isMobileMenuOpen} toggleMenu={toggleMobileMenu} />
+
+      {/* Mobile overlay */}
+      {isMobileMenuOpen && <div className="mobile-overlay" onClick={toggleMobileMenu}></div>}
 
       <div className="admin-content">
          {/* Форма входа с анимацией выхода */}
