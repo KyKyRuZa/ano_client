@@ -83,9 +83,9 @@ const AdminLayout = () => {
           className={`mobile-menu-btn ${isMobileMenuOpen ? 'open' : ''}`} 
           onClick={toggleMobileMenu}
         >
-          <span className="burger-bar"></span>
-          <span className="burger-bar"></span>
-          <span className="burger-bar"></span>
+          <span className="burger-bar-admin"></span>
+          <span className="burger-bar-admin"></span>
+          <span className="burger-bar-admin"></span>
         </button>
       )}
 

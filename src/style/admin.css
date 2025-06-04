@@ -55,7 +55,7 @@
   transform: scale(1.05);
 }
 
-.burger-bar {
+.burger-bar-admin {
   width: 24px;
   height: 3px;
   background-color: white;
@@ -65,15 +65,15 @@
 }
 
 /* Красивая анимация крестика */
-.mobile-menu-btn.open .burger-bar:nth-child(1) {
+.mobile-menu-btn.open .burger-bar-admin:nth-child(1) {
   transform: translateY(8px) rotate(45deg);
 }
 
-.mobile-menu-btn.open .burger-bar:nth-child(2) {
+.mobile-menu-btn.open .burger-bar-admin:nth-child(2) {
   opacity: 0;
 }
 
-.mobile-menu-btn.open .burger-bar:nth-child(3) {
+.mobile-menu-btn.open .burger-bar-admin:nth-child(3) {
   transform: translateY(-8px) rotate(-45deg);
 }
 
