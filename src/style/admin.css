@@ -71,7 +71,6 @@
 
 .mobile-menu-btn.open .burger-bar:nth-child(2) {
   opacity: 0;
-  transform: scaleX(0);
 }
 
 .mobile-menu-btn.open .burger-bar:nth-child(3) {
@@ -175,7 +174,7 @@
     }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 426px) {
     .sidebar {
         padding-top: 70px;
     }
@@ -204,18 +203,8 @@
         gap: 4px;
     }
     
-    .burger-bar {
-        width: 22px;
-        height: 2.5px;
-    }
     
-    .mobile-menu-btn.open .burger-bar:nth-child(1) {
-        transform: translateY(6.5px) rotate(45deg);
-    }
-    
-    .mobile-menu-btn.open .burger-bar:nth-child(3) {
-        transform: translateY(-7.5px) rotate(-45deg);
-    }
+   
 }
 
 /* Дополнительные стили для плавности */
