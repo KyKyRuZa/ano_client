@@ -58,7 +58,7 @@ const StaffPage = () => {
               <div className="staff-card-avatar">
                 {member.photo ? (
                   <img 
-                    src={`http://localhost:8000${member.photo}`} 
+                    src={`https://anotsenimzhizn.ru${member.photo}`} 
                     alt={member.name} 
                   />
                 ) : (
