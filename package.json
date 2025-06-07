@@ -1,6 +1,6 @@
 {
   "name": "client",
-  "version": "0.2.0",
+  "version": "pre-release version",
   "private": true,
   "dependencies": {
     "@fortawesome/free-brands-svg-icons": "^6.7.2",

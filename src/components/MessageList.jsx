@@ -34,6 +34,42 @@ function MessageList() {
 
   const messagesPerPage = 5;
 
+  const SkeletonLoader = () => (
+  
+  <div className="skeleton-container">
+    <div className="skeleton-message-list">
+      {[...Array(messagesPerPage)].map((_, index) => (
+        <div key={index} className="skeleton-message-card">
+          <div className="skeleton-content">
+            {/* Случайный тип медиа для разнообразия */}
+            {Math.random() > 0.3 ? (
+              <div className="skeleton-media"></div>
+            ) : Math.random() > 0.5 ? (
+              <div className="skeleton-audio"></div>
+            ) : (
+              <div className="skeleton-document"></div>
+            )}
+            
+            <div className="skeleton-text-container">
+              <div className="skeleton-text-lines">
+                <div className="skeleton-line skeleton-line-long"></div>
+                <div className="skeleton-line skeleton-line-medium"></div>
+                {Math.random() > 0.5 && (
+                  <div className="skeleton-line skeleton-line-short"></div>
+                )}
+              </div>
+            </div>
+            
+            <div className="skeleton-footer">
+              <div className="skeleton-date"></div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
   useEffect(() => {
     const getMessages = async () => {
       try {
@@ -298,7 +334,9 @@ function MessageList() {
               className="media-carousel-track"
               style={{
                 transform: `translateX(-${currentIndex * 100}%)`,
-                width: `${totalItems * 100}%`
+                width: `${totalItems * 100}%`,
+                transition: 'transform 0.5s ease-in-out'
+
               }}
             >
               {message.media_types.map((mediaType, index) => (
@@ -381,7 +419,7 @@ function MessageList() {
   if (node) observerRef.current.observe(node);
 }, [loading, hasMore]);
 
-  if (loading) return <div className="loading">Загрузка сообщений...</div>;
+  if (loading) return <div className="loading"><SkeletonLoader /></div>;
   if (error) return <div className="error">Ошибка: {error}</div>;
   if (messages.length === 0) return <div className="empty">Сообщений пока нет</div>;
 
