@@ -41,7 +41,6 @@ function MessageList() {
       {[...Array(messagesPerPage)].map((_, index) => (
         <div key={index} className="skeleton-message-card">
           <div className="skeleton-content">
-            {/* Случайный тип медиа для разнообразия */}
             {Math.random() > 0.3 ? (
               <div className="skeleton-media"></div>
             ) : Math.random() > 0.5 ? (
@@ -149,17 +148,7 @@ function MessageList() {
     const remainingSeconds = Math.floor(seconds % 60);
     return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
   };
-
-  const handleAudioPlay = (messageId) => {
-    Object.keys(audioRefs.current).forEach(key => {
-      if (key !== messageId.toString()) {
-        audioRefs.current[key].pause();
-        audioRefs.current[key].currentTime = 0;
-      }
-    });
-    setActiveAudio(messageId);
-  };
-
+  
   const toggleAudio = (messageId) => {
     const audioElement = audioRefs.current[messageId];
     const newPlayingState = {...playingStates};
@@ -321,12 +310,9 @@ function MessageList() {
       const currentIndex = mediaGroupCurrentIndex[message.id] || 0;
       const totalItems = message.media_types.length;
       
-      // Если только один элемент, показываем без карусели
       if (totalItems === 1) {
         return renderSingleMedia(message.media_types[0], message.media_urls[0], message.id, 0);
       }
-      
-      // Рендер карусели
       return (
         <div className="media-carousel">
           <div className="media-carousel-container">
@@ -346,7 +332,6 @@ function MessageList() {
               ))}
             </div>
             
-            {/* Кнопки навигации */}
             {totalItems > 1 && (
               <>
                 <button 
@@ -368,7 +353,6 @@ function MessageList() {
             )}
           </div>
           
-          {/* Индикаторы */}
           {totalItems > 1 && (
             <div className="media-carousel-indicators">
               {message.media_types.map((_, index) => (

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import '../style/login.css';
-import { Link } from 'react-router-dom';
 
 const Login = ({ onLogin, onClose }) => {
   const [formData] = useState({
@@ -11,13 +10,7 @@ const Login = ({ onLogin, onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
-    // Можно оставить, если нужно использовать в будущем
-    // Сейчас не влияет ни на что
     const { name, value } = e.target;
-    // setFormData(prev => ({
-    //   ...prev,
-    //   [name]: value
-    // }));
   };
 
   const handleSubmit = async (e) => {
@@ -26,12 +19,10 @@ const Login = ({ onLogin, onClose }) => {
     setIsLoading(true);
 
     try {
-      // Имитация успешного входа без проверки логина/пароля
       localStorage.setItem('isAdmin', 'true');
       onLogin && onLogin(true);
       onClose && onClose();
     } catch (err) {
-      // Не используется, но можно оставить заглушку
     } finally {
       setIsLoading(false);
     }
@@ -72,10 +63,7 @@ const Login = ({ onLogin, onClose }) => {
               disabled={isLoading}
               autoComplete="current-password"
             />
-          </div>
-
-          {/* Ошибок нет */}
-          
+          </div>          
           <button 
             type="submit" 
             className="login-submit-btn"

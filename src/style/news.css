@@ -507,12 +507,80 @@
   text-align: center;
 }
 
-/* Мобильные устройства (до 767px) */
-@media (max-width: 767px) {
+@media (min-width: 769px) and (max-width: 1024px) {
+  .message-card {
+    max-height: 450px;
+  }
+  
+  .skeleton-media,
+  .skeleton-audio {
+    height: 220px;
+  } 
+
+  .media-carousel-container,
+  .media-container {
+    height: 220px;
+  }
+
+  .message-text {
+    max-height: 150px;
+    -webkit-line-clamp: 5;
+  }
+
+  .message-footer {
+    font-size: 0.8rem;
+  }
+
+  .pagination-info {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 768px) {
   .message-list-container {
     padding: 0 16px;
   }
+  .message-list {
+      columns: 1;
+    }
+  .skeleton-container {
+    padding: 0 16px;
+  }
 
+  .skeleton-message-list {
+    columns: 1;
+    column-gap: 0;
+  }
+
+  .skeleton-message-card {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  .skeleton-text-container {
+    padding: 12px;
+  }
+
+  .skeleton-media,
+  .skeleton-audio {
+    height: 180px;
+  }
+
+  .skeleton-document {
+    height: 35px;
+  }
+
+  .skeleton-footer {
+    padding: 0 10px 10px 10px;
+  }
+
+  .skeleton-line {
+    height: 14px;
+  }
+
+  .skeleton-date {
+    width: 100px;
+    height: 12px;
+  }
   .message-card {
     max-height: none;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -571,34 +639,12 @@
   }
 }
 
-/* Планшеты (768px - 1024px) */
-@media (min-width: 768px) and (max-width: 1024px) {
-  .message-card {
-    max-height: 450px;
-  }
-
-  .media-carousel-container,
-  .media-container {
-    height: 220px;
-  }
-
-  .message-text {
-    max-height: 150px;
-    -webkit-line-clamp: 5;
-  }
-
-  .message-footer {
-    font-size: 0.8rem;
-  }
-
-  .pagination-info {
-    font-size: 15px;
-  }
-}
-
 /* Одна колонка на маленьких экранах */
 @media (max-width: 426px) {
   .message-list {
-    grid-template-columns: repeat(1, minmax(320px, 1fr));
+    columns: 1;
+  }
+  .skeleton-message-list {
+    columns: 1;
   }
 }
