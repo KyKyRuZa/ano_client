@@ -1,0 +1,216 @@
+.sidebar{
+    width: 282px;
+    background-color: #BC0308;
+    height: 100vh;
+}
+.admin-logo{
+    width: 184px;
+    height: 184px;
+    margin: 0px 49px;
+}
+.nav-header{
+    color: white;
+    font-size: 24px;
+}
+.nav-header span{
+    color: white;
+    font-size: 28px;
+    padding: 18px 28px;
+}
+.nav-item{
+    
+    padding: 18px 28px;
+    cursor: pointer;
+    font-weight: 400;
+}
+.nav-item:hover{
+    background-color: #c0999a;
+}
+
+/* Hamburger menu button for mobile */
+.mobile-menu-btn {
+  display: none;
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  z-index: 1001;
+  background: #BC0308;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 50px;
+  height: 50px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.mobile-menu-btn:hover {
+  background: #a00307;
+  transform: scale(1.05);
+}
+
+.burger-bar-admin {
+  display: block;
+  width: 25px;
+  height: 3px;
+  background-color: black;
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  border-radius: 2px;
+  transform-origin: center;
+    margin: 5px auto;
+
+}
+
+/* Красивая анимация крестика */
+.mobile-menu-btn.open .burger-bar-admin:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+}
+
+.mobile-menu-btn.open .burger-bar-admin:nth-child(2) {
+  opacity: 0;
+}
+
+.mobile-menu-btn.open .burger-bar-admin:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+/* Mobile overlay */
+.mobile-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 999;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.mobile-overlay.show {
+  opacity: 1;
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100vw;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: -100vw;
+        z-index: 1000;
+        transition: left 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        padding-top: 80px;
+    }
+    
+    .sidebar.mobile-open {
+        left: 0;
+    }
+    
+    .mobile-menu-btn {
+        display: flex;
+    }
+    
+    .mobile-overlay {
+        display: block;
+    }
+    
+    .sidebar-header {
+        margin-bottom: 40px;
+    }
+    
+    .admin-logo {
+        width: 150px;
+        height: 150px;
+        margin: 0 auto;
+        display: block;
+    }
+    
+    .sidebar-nav {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .nav-header {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    
+    .nav-header span {
+        font-size: 28px;
+        padding: 20px;
+        display: block;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+        margin-bottom: 20px;
+    }
+    
+    .nav-item {
+        padding: 20px 40px;
+        font-size: 18px;
+        width: 100%;
+        text-align: center;
+        margin-bottom: 10px;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+    }
+    
+    .nav-item:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+    }
+}
+
+@media (max-width: 426px) {
+    .sidebar {
+        padding-top: 70px;
+    }
+    
+    .admin-logo {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .nav-header span {
+        font-size: 24px;
+        padding: 15px;
+    }
+    
+    .nav-item {
+        padding: 18px 30px;
+        font-size: 16px;
+        width: 100%;
+    }
+    
+    .mobile-menu-btn {
+        width: 45px;
+        height: 45px;
+        top: 12px;
+        left: 12px;
+        gap: 4px;
+    }
+    
+    
+   
+}
+
+/* Дополнительные стили для плавности */
+.sidebar * {
+    transition: all 0.3s ease;
+}
