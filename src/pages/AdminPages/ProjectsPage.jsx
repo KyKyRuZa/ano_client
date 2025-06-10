@@ -80,29 +80,39 @@ const ProjectsPage = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const projectData = {
-        title: currentProject.title,
-        description: currentProject.description,
-        media_path: currentProject.media_path,
-        media_type: currentProject.media_type
-      };
+  e.preventDefault();
 
-      if (isEditing) {
-        const updated = await projectAPI.updateProject(currentProject.id, projectData);
-        setProjects(projects.map(proj => (proj.id === updated.id ? updated : proj)));
-      } else {
-        const created = await projectAPI.createProject(projectData);
-        setProjects([...projects, created]);
-      }
-      
-      setIsModalOpen(false);
-    } catch (err) {
-      console.error('Ошибка при сохранении проекта:', err);
-      setError(err.message || 'Ошибка при сохранении проекта');
+  // Проверка: id должен быть числом и больше 0 при редактировании
+  if (isEditing && (!currentProject.id || isNaN(currentProject.id))) {
+    console.error('Ошибка: ID проекта отсутствует или неверен');
+    setError('ID проекта должен быть числом');
+    return;
+  }
+
+  try {
+    const projectData = {
+      title: currentProject.title,
+      description: currentProject.description,
+      media_path: currentProject.media_path,
+      media_type: currentProject.media_type
+    };
+
+    let updatedOrCreated;
+
+    if (isEditing) {
+      updatedOrCreated = await projectAPI.updateProject(currentProject.id, projectData);
+      setProjects(projects.map(proj => (proj.id === updatedOrCreated.id ? updatedOrCreated : proj)));
+    } else {
+      updatedOrCreated = await projectAPI.createProject(projectData);
+      setProjects([...projects, updatedOrCreated]);
     }
-  };
+
+    setIsModalOpen(false);
+  } catch (err) {
+    console.error('Ошибка при сохранении проекта:', err);
+    setError(err.message || 'Ошибка при сохранении проекта');
+  }
+};
 
   const handleDelete = async (id) => {
     if (window.confirm('Вы уверены, что хотите удалить этот проект?')) {
