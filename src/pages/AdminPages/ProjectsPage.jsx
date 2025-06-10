@@ -1,68 +1,309 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faEdit,
+  faTrash,
+  faPlus,
+  faSave,
+  faTimes,
+  faEye
+} from '@fortawesome/free-solid-svg-icons';
+import { projectAPI } from '../../api/project';
+import '../../style/admin.staff.css';
 
-const MOCK_PROGRAMS = [
-  { 
-    id: 1, 
-    name: 'Помощь детям-сиротам', 
-    description: 'Программа поддержки детей в детских домах',
-    status: 'Активна',
-    budget: '500 000 ₽',
-    startDate: '01.09.2023'
-  },
-  { 
-    id: 2, 
-    name: 'Экологические инициативы', 
-    description: 'Проекты по защите окружающей среды',
-    status: 'В разработке',
-    budget: '250 000 ₽',
-    startDate: '15.10.2023'
-  },
-  { 
-    id: 3, 
-    name: 'Поддержка пожилых', 
-    description: 'Социальная программа для пожилых людей',
-    status: 'Планирование',
-    budget: '350 000 ₽',
-    startDate: '01.01.2024'
-  }
-];
+const ProjectsPage = () => {
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-const ProgramsPage = () => {
-  const [programs] = useState(MOCK_PROGRAMS);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentProject, setCurrentProject] = useState({
+    id: null,
+    title: '',
+    description: '',
+    media_path: null,
+    media_type: ''
+  });
+  const [isEditing, setIsEditing] = useState(false);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const projectsData = await projectAPI.getAllProjects();
+        setProjects(projectsData);
+      } catch (err) {
+        setError(err.message || 'Ошибка загрузки проектов');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, []);
+
+  const handleInputChange = (e) => {
+    const { name, value, files } = e.target;
+    if (name === 'media_path') {
+      const file = files[0];
+      if (file) {
+        setCurrentProject((prev) => ({ 
+          ...prev, 
+          media_path: file,
+          media_type: file.type.startsWith('image/') ? 'image' : 
+                     file.type.startsWith('video/') ? 'video' : 'document'
+        }));
+      }
+    } else {
+      setCurrentProject((prev) => ({ ...prev, [name]: value }));
+    }
+  };
+
+  const openAddModal = () => {
+    setCurrentProject({
+      id: null,
+      title: '',
+      description: '',
+      media_path: null,
+      media_type: ''
+    });
+    setIsEditing(false);
+    setIsModalOpen(true);
+  };
+
+  const openEditModal = (project) => {
+    setCurrentProject({
+      ...project,
+      media_path: null // Сбрасываем файл для редактирования
+    });
+    setIsEditing(true);
+    setIsModalOpen(true);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const projectData = {
+        title: currentProject.title,
+        description: currentProject.description,
+        media_path: currentProject.media_path,
+        media_type: currentProject.media_type
+      };
+
+      if (isEditing) {
+        const updated = await projectAPI.updateProject(currentProject.id, projectData);
+        setProjects(projects.map(proj => (proj.id === updated.id ? updated : proj)));
+      } else {
+        const created = await projectAPI.createProject(projectData);
+        setProjects([...projects, created]);
+      }
+      
+      setIsModalOpen(false);
+    } catch (err) {
+      console.error('Ошибка при сохранении проекта:', err);
+      setError(err.message || 'Ошибка при сохранении проекта');
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm('Вы уверены, что хотите удалить этот проект?')) {
+      try {
+        await projectAPI.deleteProject(id);
+        setProjects(projects.filter(proj => proj.id !== id));
+      } catch (err) {
+        console.error('Ошибка удаления:', err);
+        setError(err.message || 'Ошибка при удалении проекта');
+      }
+    }
+  };
+
+  const getMediaTypeText = (mediaType) => {
+    const typeMap = {
+      'image': 'Изображение',
+      'video': 'Видео',
+      'document': 'Документ'
+    };
+    return typeMap[mediaType] || mediaType || '-';
+  };
+
+  const getMediaTypeClass = (mediaType) => {
+    const typeClasses = {
+      'image': 'media-image',
+      'video': 'media-video',
+      'document': 'media-document'
+    };
+    return typeClasses[mediaType] || '';
+  };
+
+  const renderMediaPreview = (project) => {
+    if (!project.media_path) return null;
+    
+    if (project.media_type === 'image') {
+      return (
+        <img 
+          src={project.media_path} 
+          alt={project.title}
+          className="media-preview-small"
+          style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px' }}
+        />
+      );
+    }
+    
+    return (
+      <span className="media-indicator">
+        <FontAwesomeIcon icon={faEye} />
+      </span>
+    );
+  };
+
+  if (loading) return <div className="loading">Загрузка...</div>;
+  if (error) return <div className="error">Ошибка: {error}</div>;
 
   return (
     <div className="admin-page">
-      <h1>Социальные программы</h1>
-      <table className="admin-table">
-        <thead>
-          <tr>
-            <th>Название программы</th>
-            <th>Описание</th>
-            <th>Статус</th>
-            <th>Бюджет</th>
-            <th>Дата старта</th>
-            <th>Действия</th>
-          </tr>
-        </thead>
-        <tbody>
-          {programs.map(program => (
-            <tr key={program.id}>
-              <td>{program.name}</td>
-              <td>{program.description}</td>
-              <td>{program.status}</td>
-              <td>{program.budget}</td>
-              <td>{program.startDate}</td>
-              <td>
-                <div className="action-buttons">
-                  <button className="btn btn-edit">Детали</button>
-                </div>
-              </td>
+      <div className="page-header">
+        <h1>Управление проектами</h1>
+        <button className="btn btn-add" onClick={openAddModal}>
+          <FontAwesomeIcon icon={faPlus} /> Добавить проект
+        </button>
+      </div>
+
+      {/* Таблица с проектами */}
+      <div className="table-container">
+        <table className="admin-table">
+          <thead>
+            <tr>
+              <th>Название</th>
+              <th>Описание</th>
+              <th>Медиа</th>
+              <th>Тип медиа</th>
+              <th>Действия</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {projects.map((project) => (
+              <tr key={project.id}>
+                <td>
+                  <div className="project-title">
+                    {project.title}
+                  </div>
+                </td>
+                <td>
+                  <div className="project-description">
+                    {project.description ? 
+                      (project.description.length > 100 ? 
+                        `${project.description.substring(0, 100)}...` : 
+                        project.description
+                      ) : '-'
+                    }
+                  </div>
+                </td>
+                <td>
+                  <div className="media-cell">
+                    {renderMediaPreview(project)}
+                  </div>
+                </td>
+                <td>
+                  <span className={`media-type-badge ${getMediaTypeClass(project.media_type)}`}>
+                    {getMediaTypeText(project.media_type)}
+                  </span>
+                </td>
+                <td>
+                  <div className="action-buttons">
+                    <button 
+                      className="btn btn-edit" 
+                      onClick={() => openEditModal(project)}
+                      title="Редактировать"
+                    >
+                      <FontAwesomeIcon icon={faEdit} />
+                    </button>
+                    <button 
+                      className="btn btn-delete" 
+                      onClick={() => handleDelete(project.id)}
+                      title="Удалить"
+                    >
+                      <FontAwesomeIcon icon={faTrash} />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Модальное окно */}
+      {isModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2>{isEditing ? 'Редактировать проект' : 'Добавить проект'}</h2>
+            <form onSubmit={handleSubmit}>
+              <div className="form-group">
+                <label>Название проекта *</label>
+                <input 
+                  type="text" 
+                  name="title" 
+                  value={currentProject.title} 
+                  onChange={handleInputChange} 
+                  required 
+                />
+              </div>
+              
+              <div className="form-group">
+                <label>Описание</label>
+                <textarea 
+                  name="description" 
+                  value={currentProject.description} 
+                  onChange={handleInputChange}
+                  rows="4"
+                  placeholder="Описание проекта..."
+                />
+              </div>
+              
+              <div className="form-group">
+                <label>Медиа файл</label>
+                <input 
+                  type="file" 
+                  name="media_path" 
+                  accept="image/*,video/*,.pdf,.doc,.docx" 
+                  onChange={handleInputChange} 
+                />
+                {isEditing && (
+                  <small className="form-hint">
+                    Оставьте пустым, если не хотите изменять медиа файл
+                  </small>
+                )}
+              </div>
+
+              {currentProject.media_type && (
+                <div className="form-group">
+                  <label>Тип медиа</label>
+                  <input 
+                    type="text" 
+                    value={getMediaTypeText(currentProject.media_type)}
+                    disabled
+                    className="form-control-disabled"
+                  />
+                </div>
+              )}
+              
+              <div className="modal-actions">
+                <button type="submit" className="btn btn-save">
+                  <FontAwesomeIcon icon={faSave} /> Сохранить
+                </button>
+                <button 
+                  type="button" 
+                  className="btn btn-cancel" 
+                  onClick={() => setIsModalOpen(false)}
+                >
+                  <FontAwesomeIcon icon={faTimes} /> Отмена
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
-export default ProgramsPage;
+export default ProjectsPage;
