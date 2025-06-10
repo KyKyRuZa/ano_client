@@ -1,9 +1,7 @@
 import axios from 'axios';
 
-// Определяем базовый URL в зависимости от окружения
-const API_BASE_URL = 'https://anotsenimzhizn.ru/api/staff'
+const API_BASE_URL = 'https://anotsenimzhizn.ru/api';
 
-// Создаем экземпляр axios с настройками для HTTPS
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
   timeout: 30000,
@@ -13,7 +11,7 @@ const apiClient = axios.create({
   }
 });
 
-// Интерцептор для обработки ошибок
+// Логирование ошибок
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -30,85 +28,43 @@ apiClient.interceptors.response.use(
 export const staffApi = {
   createStaff: async (staffData) => {
     try {
-      console.log('=== CLIENT: Sending staff data ===');
-      console.log('API URL:', API_BASE_URL);
-      console.log('Type of staffData:', typeof staffData);
-      console.log('Is FormData:', staffData instanceof FormData);
-      
-      if (staffData instanceof FormData) {
-        console.log('FormData entries:');
-        for (let [key, value] of staffData.entries()) {
-          console.log(`${key}:`, value instanceof File ? `File: ${value.name}` : value);
-        }
-      } else {
-        console.log('Raw data:', staffData);
-      }
-      
-      const response = await apiClient.post('/', staffData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-      
-      console.log('✅ Success response:', response.data);
+      const response = await apiClient.post('/staff', staffData);
       return response.data;
     } catch (error) {
-      console.error('❌ Create staff request failed');
-      
       if (error.response?.data) {
-        const serverError = error.response.data.error || error.response.data.message || `Server error: ${error.response.status}`;
-        throw new Error(serverError);
-      } else if (error.request) {
-        throw new Error('Нет ответа от сервера');
-      } else {
-        throw new Error(`Ошибка запроса: ${error.message}`);
+        throw new Error(error.response.data.message || 'Ошибка создания сотрудника');
       }
+      throw error;
     }
   },
 
   getAllStaff: async () => {
     try {
-      const response = await apiClient.get('/');
+      const response = await apiClient.get('/staff');
       return response.data;
     } catch (error) {
-      console.error('Error fetching staff:', error);
+      console.error('Ошибка получения списка сотрудников:', error);
       throw error;
     }
   },
 
   getStaffById: async (id) => {
     try {
-      const response = await apiClient.get(`/${id}`);
+      const response = await apiClient.get(`/staff/${id}`);
       return response.data;
     } catch (error) {
-      console.error(`Error fetching staff member ${id}:`, error);
+      console.error(`Ошибка получения сотрудника ${id}:`, error);
       throw error;
     }
   },
 
   updateStaff: async (id, staffData) => {
     try {
-      console.log('=== CLIENT: Updating staff data ===');
-      console.log('Staff ID:', id);
-      console.log('Type of staffData:', typeof staffData);
-      
-      if (staffData instanceof FormData) {
-        console.log('FormData entries for update:');
-        for (let [key, value] of staffData.entries()) {
-          console.log(`${key}:`, value instanceof File ? `File: ${value.name}` : value);
-        }
-      }
-      
-      const response = await apiClient.put(`/${id}`, staffData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-      
+      const response = await apiClient.put(`/staff/${id}`, staffData);
       return response.data;
     } catch (error) {
       if (error.response?.data) {
-        throw new Error(error.response.data.error || error.response.data.message || 'Update error');
+        throw new Error(error.response.data.message || 'Ошибка обновления данных');
       }
       throw error;
     }
@@ -116,34 +72,18 @@ export const staffApi = {
 
   partialUpdateStaff: async (id, staffData) => {
     try {
-      let formData;
-      
-      if (staffData instanceof FormData) {
-        formData = staffData;
-      } else {
-        formData = new FormData();
-        Object.keys(staffData).forEach(key => {
-          if (staffData[key] !== null && staffData[key] !== undefined) {
-            formData.append(key, staffData[key]);
-          }
-        });
-      }
+      const formData = staffData instanceof FormData 
+        ? staffData 
+        : Object.entries(staffData).reduce((fd, [key, value]) => {
+            if (value !== null && value !== undefined) fd.append(key, value);
+            return fd;
+          }, new FormData());
 
-      console.log('=== CLIENT: Partial update data ===');
-      for (let [key, value] of formData.entries()) {
-        console.log(`${key}:`, value instanceof File ? `File: ${value.name}` : value);
-      }
-      
-      const response = await apiClient.patch(`/update/${id}`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-      
+      const response = await apiClient.patch(`/staff/update/${id}`, formData);
       return response.data;
     } catch (error) {
       if (error.response?.data) {
-        throw new Error(error.response.data.error || error.response.data.message || 'Partial update error');
+        throw new Error(error.response.data.message || 'Ошибка частичного обновления');
       }
       throw error;
     }
@@ -151,10 +91,10 @@ export const staffApi = {
 
   deleteStaff: async (id) => {
     try {
-      const response = await apiClient.delete(`/${id}`);
+      const response = await apiClient.delete(`/staff/${id}`);
       return response.data;
     } catch (error) {
-      console.error(`Error deleting staff member ${id}:`, error);
+      console.error(`Ошибка удаления сотрудника ${id}:`, error);
       throw error;
     }
   }
