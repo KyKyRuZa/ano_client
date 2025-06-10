@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'https://anotsenimzhizn.ru/api/';
+const API_BASE_URL = 'https://anotsenimzhizn.ru/api/programs';
 
 // Создание экземпляра axios с базовой конфигурацией
 const api = axios.create({

@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+// Определяем базовый URL в зависимости от окружения
 const API_BASE_URL = 'https://anotsenimzhizn.ru/api/staff'
 
+// Создаем экземпляр axios с настройками для HTTPS
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
   timeout: 30000,
@@ -11,10 +13,30 @@ const apiClient = axios.create({
   }
 });
 
+// Интерцептор для обработки ошибок
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    console.error('API Error:', {
+      message: error.message,
+      status: error.response?.status,
+      data: error.response?.data,
+      url: error.config?.url
+    });
+    return Promise.reject(error);
+  }
+);
+
 export const staffApi = {
   createStaff: async (staffData) => {
     try {
+      console.log('=== CLIENT: Sending staff data ===');
+      console.log('API URL:', API_BASE_URL);
+      console.log('Type of staffData:', typeof staffData);
+      console.log('Is FormData:', staffData instanceof FormData);
+      
       if (staffData instanceof FormData) {
+        console.log('FormData entries:');
         for (let [key, value] of staffData.entries()) {
           console.log(`${key}:`, value instanceof File ? `File: ${value.name}` : value);
         }
@@ -66,6 +88,9 @@ export const staffApi = {
 
   updateStaff: async (id, staffData) => {
     try {
+      console.log('=== CLIENT: Updating staff data ===');
+      console.log('Staff ID:', id);
+      console.log('Type of staffData:', typeof staffData);
       
       if (staffData instanceof FormData) {
         console.log('FormData entries for update:');
@@ -103,6 +128,8 @@ export const staffApi = {
           }
         });
       }
+
+      console.log('=== CLIENT: Partial update data ===');
       for (let [key, value] of formData.entries()) {
         console.log(`${key}:`, value instanceof File ? `File: ${value.name}` : value);
       }
