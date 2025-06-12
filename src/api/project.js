@@ -21,7 +21,7 @@ const projectAPI = {
 
   getAllProjects: async () => {
     try {
-      const response = await api.get('/projetcs');
+      const response = await api.get('/projects');
       return response.data;
     } catch (error) {
       console.error('Ошибка при получении проектов:', error.message);
@@ -32,7 +32,7 @@ const projectAPI = {
 
   getProjectById: async (id) => {
     try {
-      const response = await api.get(`/projetcs/${id}`);
+      const response = await api.get(`/projects/${id}`);
       return response.data;
     } catch (error) {
       console.error('Ошибка при получении проекта:', error.message);
@@ -44,7 +44,7 @@ const projectAPI = {
     try {
       const formData = objectToFormData(projectData);
 
-      const response = await api.post('/projetcs', formData, {
+      const response = await api.post('/projects', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -61,7 +61,7 @@ const projectAPI = {
     try {
       const formData = objectToFormData(projectData);
 
-      const response = await api.put(`/projetcs/${id}`, formData, {
+      const response = await api.put(`/projects/${id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -78,7 +78,7 @@ const projectAPI = {
     try {
       const formData = objectToFormData(updates);
 
-      const response = await api.patch(`/projetcs/${id}`, formData, {
+      const response = await api.patch(`/projects/${id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -93,7 +93,7 @@ const projectAPI = {
 
   deleteProject: async (id) => {
     try {
-      const response = await api.delete(`/projetcs/${id}`);
+      const response = await api.delete(`/projects/${id}`);
       return response.data;
     } catch (error) {
       console.error('Ошибка при удалении проекта:', error.message);
