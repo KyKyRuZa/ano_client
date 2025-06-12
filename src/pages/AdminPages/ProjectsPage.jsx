@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faEdit,
@@ -8,7 +8,7 @@ import {
   faTimes,
   faEye
 } from '@fortawesome/free-solid-svg-icons';
-import { projectAPI } from '../../api/project';
+import projectAPI from '../../api/project';
 import '../../style/admin.staff.css';
 
 const ProjectsPage = () => {

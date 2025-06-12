@@ -1,8 +1,7 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'https://anotsenimzhizn.ru/api/programs';
+const API_BASE_URL = 'https://anotsenimzhizn.ru/api';
 
-// Создание экземпляра axios с базовой конфигурацией
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
@@ -10,9 +9,7 @@ const api = axios.create({
   },
 });
 
-// API методы для работы с программами
-export const programAPI = {
-  // Получить все программы
+const programAPI = {
   getAllPrograms: async () => {
     try {
       const response = await api.get('/programs');
@@ -65,12 +62,10 @@ export const programAPI = {
     }
   },
 
-  // Обновить программу (полное обновление)
   updateProgram: async (id, programData) => {
     try {
       const formData = new FormData();
       
-      // Добавляем текстовые поля
       if (programData.title) {
         formData.append('title', programData.title);
       }
@@ -78,7 +73,6 @@ export const programAPI = {
         formData.append('description', programData.description);
       }
       
-      // Добавляем файл, если он есть
       if (programData.file) {
         formData.append('file', programData.file);
       }
@@ -96,7 +90,6 @@ export const programAPI = {
     }
   },
 
-  // Частичное обновление программы
   partialUpdateProgram: async (id, updates) => {
     try {
       const formData = new FormData();
@@ -125,7 +118,6 @@ export const programAPI = {
     }
   },
 
-  // Удалить программу
   deleteProgram: async (id) => {
     try {
       const response = await api.delete(`/programs/${id}`);
@@ -135,72 +127,6 @@ export const programAPI = {
       throw error;
     }
   },
-
-  // Скачать файл программы
-  downloadProgramFile: async (id) => {
-    try {
-      const response = await api.get(`/programs/${id}/download`, {
-        responseType: 'blob',
-      });
-      
-      // Создаем URL для скачивания
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      
-      // Получаем имя файла из заголовков ответа
-      const contentDisposition = response.headers['content-disposition'];
-      let filename = 'program_file';
-      if (contentDisposition) {
-        const filenameMatch = contentDisposition.match(/filename="(.+)"/);
-        if (filenameMatch) {
-          filename = filenameMatch[1];
-        }
-      }
-      
-      link.setAttribute('download', filename);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
-      
-      return { success: true, message: 'Файл успешно скачан' };
-    } catch (error) {
-      console.error('Ошибка при скачивании файла:', error);
-      throw error;
-    }
-  },
-
-  // Получить URL для просмотра файла
-  getProgramFileUrl: (filePath) => {
-    return `${API_BASE_URL}/uploads/${filePath}`;
-  },
-
-  // Поиск программ
-  searchPrograms: async (query) => {
-    try {
-      const response = await api.get(`/programs/search`, {
-        params: { q: query }
-      });
-      return response.data;
-    } catch (error) {
-      console.error('Ошибка при поиске программ:', error);
-      throw error;
-    }
-  },
-
-  // Получить программы с пагинацией
-  getProgramsWithPagination: async (page = 1, limit = 10) => {
-    try {
-      const response = await api.get('/programs', {
-        params: { page, limit }
-      });
-      return response.data;
-    } catch (error) {
-      console.error('Ошибка при получении программ с пагинацией:', error);
-      throw error;
-    }
-  }
 };
 
 export default programAPI;

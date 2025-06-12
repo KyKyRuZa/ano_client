@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'https://anotsenimzhizn.ru/api/programs';
+const API_BASE_URL = 'https://anotsenimzhizn.ru/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -17,11 +17,11 @@ function objectToFormData(obj) {
   return formData;
 }
 
-export const projectAPI = {
+const projectAPI = {
 
   getAllProjects: async () => {
     try {
-      const response = await api.get('/');
+      const response = await api.get('/projetcs');
       return response.data;
     } catch (error) {
       console.error('Ошибка при получении проектов:', error.message);
@@ -32,7 +32,7 @@ export const projectAPI = {
 
   getProjectById: async (id) => {
     try {
-      const response = await api.get(`/${id}`);
+      const response = await api.get(`/projetcs/${id}`);
       return response.data;
     } catch (error) {
       console.error('Ошибка при получении проекта:', error.message);
@@ -44,7 +44,7 @@ export const projectAPI = {
     try {
       const formData = objectToFormData(projectData);
 
-      const response = await api.post('/', formData, {
+      const response = await api.post('/projetcs', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -61,7 +61,7 @@ export const projectAPI = {
     try {
       const formData = objectToFormData(projectData);
 
-      const response = await api.put(`/${id}`, formData, {
+      const response = await api.put(`/projetcs/${id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -78,7 +78,7 @@ export const projectAPI = {
     try {
       const formData = objectToFormData(updates);
 
-      const response = await api.patch(`/${id}`, formData, {
+      const response = await api.patch(`/projetcs/${id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -93,12 +93,13 @@ export const projectAPI = {
 
   deleteProject: async (id) => {
     try {
-      const response = await api.delete(`/${id}`);
+      const response = await api.delete(`/projetcs/${id}`);
       return response.data;
     } catch (error) {
       console.error('Ошибка при удалении проекта:', error.message);
       throw error;
     }
-  },
-
+  }
 };
+
+export default projectAPI;

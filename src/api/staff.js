@@ -25,7 +25,7 @@ apiClient.interceptors.response.use(
   }
 );
 
-export const staffApi = {
+const staffApi = {
   createStaff: async (staffData) => {
     try {
       const response = await apiClient.post('/staff', staffData);
