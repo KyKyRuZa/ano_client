@@ -83,16 +83,6 @@ const Project = () => {
     return null;
   };
 
-  if (loading) {
-    return (
-      <div className="project-container">
-        <div className="loading">
-          <p>Загрузка проекта...</p>
-        </div>
-      </div>
-    );
-  }
-
   if (error) {
     return (
       <div className="project-container">
