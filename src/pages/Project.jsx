@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import projectAPI from '../api/project.js';
 import '../style/project.css';
+import Header from '../components/ux/Header.jsx';
+import Footer from '../components/ux/Footer.jsx';
 
 const Project = () => {
   const { id } = useParams();
@@ -116,22 +118,26 @@ const Project = () => {
   }
 
   return (
-    <div className="project-container">
-      <div className="title">
-        {renderMedia()}
-        <h1>{project.title}</h1>
-      </div>
-      
-      {project.description && (
-        <div className="discription">
-          {project.description.split('\n').map((paragraph, index) => (
-            <p key={index}>
-              {paragraph}
-            </p>
-          ))}
+    <>
+      <Header/>
+      <div className="project-container">
+        <div className="title">
+          {renderMedia()}
+          <h1>{project.title}</h1>
         </div>
-      )}
-    </div>
+        
+        {project.description && (
+          <div className="discription">
+            {project.description.split('\n').map((paragraph, index) => (
+              <p key={index}>
+                {paragraph}
+              </p>
+            ))}
+          </div>
+        )}
+      </div>
+      <Footer/>
+    </>
   );
 };
 
