@@ -11,36 +11,26 @@ const Header = () => {
   const [programs, setPrograms] = useState([]);
   const [loading, setLoading] = useState(true);
   const { pathname } = useLocation();
+  
+  const toggleMenu = () => {
+    setIsOpen(!isOpen);
+  };
 
-  useEffect(() => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
-
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [isOpen, pathname]);
-
-  // Загрузка данных
+  // Загружаем данные при монтировании компонента
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
         const [projectsData, programsData] = await Promise.all([
           projectsAPI.getAllProjects(),
-          programsAPI.getAllPrograms(),
+          programsAPI.getAllPrograms()
         ]);
-        setProjects(projectsData);
-        setPrograms(programsData);
+        setProjects(projectsData || []);
+        setPrograms(programsData || []);
       } catch (error) {
         console.error('Ошибка при загрузке данных:', error);
+        setProjects([]);
+        setPrograms([]);
       } finally {
         setLoading(false);
       }
@@ -49,80 +39,94 @@ const Header = () => {
     fetchData();
   }, []);
 
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
-  };
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen, pathname]);
 
   return (
     <header className="header">
       <nav className="navbar">
-        {/* Бургер-меню */}
         <div className="burger-menu" onClick={toggleMenu}>
           <span className={`burger-bar ${isOpen ? 'open' : ''}`}></span>
           <span className={`burger-bar ${isOpen ? 'open' : ''}`}></span>
           <span className={`burger-bar ${isOpen ? 'open' : ''}`}></span>
         </div>
-
-        {/* Навигационное меню */}
+        
         <ul className={`nav-links ${isOpen ? 'active' : ''}`}>
-          {/* Проекты */}
-          <li
-            className="nav-item"
+          <Link
+            className='link'
             onMouseEnter={() => setActiveDropdown('projects')}
             onMouseLeave={() => setActiveDropdown(null)}
           >
-            <span className="link">Проекты</span>
+            Проекты
             <div className={`dropdown-menu ${activeDropdown === 'projects' ? 'show' : ''}`}>
               {loading ? (
-                <div>Загрузка...</div>
+                <div className="dropdown-loading">Загрузка...</div>
               ) : projects.length > 0 ? (
-                projects.map((project) => (
-                  <Link key={project.id} to={`/project/${project.id}`}>
-                    {project.title || project.name}
+                projects.map(project => (
+                  <Link 
+                    key={project.id} 
+                    to={`/project/${project.id}`}
+                    onClick={() => {
+                      setActiveDropdown(null);
+                      setIsOpen(false);
+                    }}
+                  >
+                    {project.title || project.name || `Проект ${project.id}`}
                   </Link>
                 ))
               ) : (
-                <div>Проекты не найдены</div>
+                <div className="dropdown-empty">Проекты не найдены</div>
               )}
             </div>
-          </li>
-
-          {/* Программы */}
-          <li
-            className="nav-item"
+          </Link>
+          <Link
+            className='link'
             onMouseEnter={() => setActiveDropdown('programs')}
             onMouseLeave={() => setActiveDropdown(null)}
           >
-            <span className="link">Программы</span>
+            Программы
             <div className={`dropdown-menu ${activeDropdown === 'programs' ? 'show' : ''}`}>
               {loading ? (
-                <div>Загрузка...</div>
+                <div className="dropdown-loading">Загрузка...</div>
               ) : programs.length > 0 ? (
-                programs.map((program) => (
-                  <Link key={program.id} to={`/program/${program.id}`}>
-                    {program.title || program.name}
+                programs.map(program => (
+                  <Link 
+                    key={program.id} 
+                    to={`/program/${program.id}`}
+                    onClick={() => {
+                      setActiveDropdown(null);
+                      setIsOpen(false);
+                    }}
+                  >
+                    {program.title || program.name || `Программа ${program.id}`}
                   </Link>
                 ))
               ) : (
-                <div>Программы не найдены</div>
+                <div className="dropdown-empty">Программы не найдены</div>
               )}
             </div>
-          </li>
-
-          {/* О персоналии */}
-          <li className="nav-item">
-            <Link className="link" to="/personal/">
-              О персоналии
-            </Link>
-          </li>
+          </Link>
+          <Link className='link' to="/personal/">
+              <div>
+                О персоналии
+              </div>
+          </Link>
         </ul>
-
-        {/* Логотип */}
-        <Link to="/">
-          <img src={logo} alt="Banner" className="banner" />
-        </Link>
-
-        {/* Контакты */}
+        
+        <Link to="/"><img src={logo} alt="Banner" className="banner" /></Link>
+        
         <div className="contact-info">
           <a href="tel:+79274819037">+7-927-481-90-37</a>
         </div>

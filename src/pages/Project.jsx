@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
+import projectAPI from '../api/project.js';
 import '../style/project.css';
-import Header from '../components/ux/Header';
-import Footer from '../components/ux/Footer';
-import projectsAPI from '../api/project';
 
 const Project = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -15,65 +14,124 @@ const Project = () => {
     const fetchProject = async () => {
       try {
         setLoading(true);
-        const projectData = await projectsAPI.getProjectById(id);
+        setError(null);
+        
+        if (!id) {
+          setError('ID проекта не указан');
+          return;
+        }
+
+        const projectData = await projectAPI.getProjectById(id);
         setProject(projectData);
-      } catch (error) {
-        console.error('Ошибка при загрузке проекта:', error);
-        setError('Не удалось загрузить проект');
+      } catch (err) {
+        console.error('Ошибка при загрузке проекта:', err);
+        
+        if (err.response?.status === 404) {
+          setError('Проект не найден');
+        } else if (err.response?.status === 500) {
+          setError('Ошибка сервера. Попробуйте позже.');
+        } else {
+          setError('Произошла ошибка при загрузке проекта');
+        }
       } finally {
         setLoading(false);
       }
     };
 
-    if (id) {
-      fetchProject();
-    }
+    fetchProject();
   }, [id]);
+
+  const getMediaUrl = (mediaPath) => {
+    if (!mediaPath) return null;
+    
+    if (mediaPath.startsWith('https://') || mediaPath.startsWith('http://')) {
+      return mediaPath;
+    }
+    
+    const path = mediaPath.startsWith('/') ? mediaPath : `/${mediaPath}`;
+    return `https://anotsenimzhizn.ru${path}`;
+  };
+
+  const renderMedia = () => {
+    if (!project?.media_path) return null;
+
+    const mediaUrl = getMediaUrl(project.media_path);
+    const mediaType = project.media_type?.toLowerCase();
+
+    if (mediaType === 'image' || mediaType === 'photo') {
+      return (
+        <img 
+          src={mediaUrl} 
+          alt={project.title}
+          onError={(e) => {
+            console.error('Ошибка загрузки изображения:', mediaUrl);
+            e.target.style.display = 'none';
+          }}
+        />
+      );
+    } else if (mediaType === 'video') {
+      return (
+        <video controls>
+          <source src={mediaUrl} type="video/mp4" />
+          Ваш браузер не поддерживает воспроизведение видео.
+        </video>
+      );
+    }
+
+    return null;
+  };
 
   if (loading) {
     return (
-      <>
-        <Header/>
-        <div className="project-container">
-          <div>Загрузка...</div>
+      <div className="project-container">
+        <div className="loading">
+          <p>Загрузка проекта...</p>
         </div>
-        <Footer/>
-      </>
+      </div>
     );
   }
 
-  if (error || !project) {
+  if (error) {
     return (
-      <>
-        <Header/>
-        <div className="project-container">
-          <div>{error || 'Проект не найден'}</div>
+      <div className="project-container">
+        <div className="error">
+          <h2>Ошибка</h2>
+          <p>{error}</p>
+          <button onClick={() => navigate(-1)}>
+            Назад
+          </button>
         </div>
-        <Footer/>
-      </>
+      </div>
+    );
+  }
+
+  if (!project) {
+    return (
+      <div className="project-container">
+        <div className="not-found">
+          <p>Проект не найден</p>
+        </div>
+      </div>
     );
   }
 
   return (
-    <>
-      <Header/>
-      <div className="project-container">
-        <div>
-          <div className='title'> 
-            <img 
-              src={project.media_path || project.image } 
-              alt={project.title || project.name} 
-            />
-            <h1>{project.title || project.name}</h1>
-          </div>
-        
-          <div className='discription'>
-            {project.description || project.content || 'Описание отсутствует'}
-          </div>
-        </div>
+    <div className="project-container">
+      <div className="title">
+        {renderMedia()}
+        <h1>{project.title}</h1>
       </div>
-      <Footer/>
-    </>
+      
+      {project.description && (
+        <div className="discription">
+          {project.description.split('\n').map((paragraph, index) => (
+            <p key={index}>
+              {paragraph}
+            </p>
+          ))}
+        </div>
+      )}
+    </div>
   );
 };
 
