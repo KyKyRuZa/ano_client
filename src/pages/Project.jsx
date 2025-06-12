@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import '../style/project.css';
-import projectImage from '../style/assets/p-1.png';
 import Header from '../components/ux/Header';
 import Footer from '../components/ux/Footer';
 import projectsAPI from '../api/project';
@@ -62,11 +61,8 @@ const Project = () => {
         <div>
           <div className='title'> 
             <img 
-              src={project.media_path || project.image || projectImage} 
+              src={project.media_path || project.image } 
               alt={project.title || project.name} 
-              onError={(e) => {
-                e.target.src = projectImage;
-              }}
             />
             <h1>{project.title || project.name}</h1>
           </div>
