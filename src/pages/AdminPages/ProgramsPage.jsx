@@ -29,14 +29,21 @@ const ProgramsPage = () => {
   useEffect(() => {
     const fetchPrograms = async () => {
       try {
+        setLoading(true);
+        setError(null);
         const programsData = await programAPI.getAllPrograms();
-        setPrograms(programsData);
+        console.log('Loaded programs:', programsData);
+        setPrograms(Array.isArray(programsData) ? programsData : []);
       } catch (err) {
-        setError(err.message || 'Ошибка загрузки программ');
+        console.error('Error in fetchPrograms:', err);
+        const errorMessage = err.response?.data?.error || err.message || 'Ошибка загрузки программ';
+        setError(errorMessage);
+        setPrograms([]); // Устанавливаем пустой массив при ошибке
       } finally {
         setLoading(false);
       }
-    };
+};
+
 
     fetchPrograms();
   }, []);
