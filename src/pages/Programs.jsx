@@ -1,33 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import '../style/project.css';
-import projectImage from '../style/assets/p-1.png';
+import '../style/project.css'; // Используем те же стили что и для проектов
+import programImage from '../style/assets/p-1.png'; // Можете создать отдельное изображение для программ
 import Header from '../components/ux/Header';
 import Footer from '../components/ux/Footer';
-import projectsAPI from '../api/projects';
+import programsAPI from '../api/programs';
 
-const Project = () => {
+const Programs = () => {
   const { id } = useParams();
-  const [project, setProject] = useState(null);
+  const [program, setProgram] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchProject = async () => {
+    const fetchProgram = async () => {
       try {
         setLoading(true);
-        const projectData = await projectsAPI.getProjectById(id);
-        setProject(projectData);
+        const programData = await programsAPI.getProgramById(id);
+        setProgram(programData);
       } catch (error) {
-        console.error('Ошибка при загрузке проекта:', error);
-        setError('Не удалось загрузить проект');
+        console.error('Ошибка при загрузке программы:', error);
+        setError('Не удалось загрузить программу');
       } finally {
         setLoading(false);
       }
     };
 
     if (id) {
-      fetchProject();
+      fetchProgram();
     }
   }, [id]);
 
@@ -43,12 +43,12 @@ const Project = () => {
     );
   }
 
-  if (error || !project) {
+  if (error || !program) {
     return (
       <>
         <Header/>
         <div className="project-container">
-          <div>{error || 'Проект не найден'}</div>
+          <div>{error || 'Программа не найдена'}</div>
         </div>
         <Footer/>
       </>
@@ -62,17 +62,17 @@ const Project = () => {
         <div>
           <div className='title'> 
             <img 
-              src={project.media_path || project.image || projectImage} 
-              alt={project.title || project.name} 
+              src={program.media_path || program.image || programImage} 
+              alt={program.title || program.name} 
               onError={(e) => {
-                e.target.src = projectImage;
+                e.target.src = programImage;
               }}
             />
-            <h1>{project.title || project.name}</h1>
+            <h1>{program.title || program.name}</h1>
           </div>
         
           <div className='discription'>
-            {project.description || project.content || 'Описание отсутствует'}
+            {program.description || program.content || 'Описание отсутствует'}
           </div>
         </div>
       </div>
@@ -81,4 +81,4 @@ const Project = () => {
   );
 };
 
-export default Project;
+export default Programs;
