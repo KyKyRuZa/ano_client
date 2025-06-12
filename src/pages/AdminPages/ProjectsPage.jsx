@@ -27,16 +27,24 @@ const ProjectsPage = () => {
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
+    // Обновите функцию fetchProjects:
     const fetchProjects = async () => {
       try {
+        setLoading(true);
+        setError(null);
         const projectsData = await projectAPI.getAllProjects();
-        setProjects(projectsData);
+        console.log('Loaded projects:', projectsData);
+        setProjects(Array.isArray(projectsData) ? projectsData : []);
       } catch (err) {
-        setError(err.message || 'Ошибка загрузки проектов');
+        console.error('Error in fetchProjects:', err);
+        const errorMessage = err.response?.data?.error || err.message || 'Ошибка загрузки проектов';
+        setError(errorMessage);
+        setProjects([]); // Устанавливаем пустой массив при ошибке
       } finally {
         setLoading(false);
       }
     };
+
 
     fetchProjects();
   }, []);
