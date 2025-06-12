@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import logo from '../style/assets/logo.svg';
-import projectsAPI from '../..api/project';
+import projectsAPI from '../../api/project';
 import programsAPI from '../../api/programm';
 
 const Header = () => {
@@ -12,7 +12,6 @@ const Header = () => {
   const [loading, setLoading] = useState(true);
   const { pathname } = useLocation();
 
-  // Для блокировки скролла и прокрутки вверх
   useEffect(() => {
     window.scrollTo({
       top: 0,
