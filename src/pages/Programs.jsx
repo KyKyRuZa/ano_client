@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import '../style/project.css'; // Используем те же стили что и для проектов
-import programImage from '../style/assets/p-1.png'; // Можете создать отдельное изображение для программ
+import '../style/project.css'; 
+import programImage from '../style/assets/p-1.png';
 import Header from '../components/ux/Header';
 import Footer from '../components/ux/Footer';
-import programsAPI from '../api/programs';
+import programsAPI from '../api/programm';
 
 const Programs = () => {
   const { id } = useParams();

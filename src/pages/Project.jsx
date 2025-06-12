@@ -4,7 +4,7 @@ import '../style/project.css';
 import projectImage from '../style/assets/p-1.png';
 import Header from '../components/ux/Header';
 import Footer from '../components/ux/Footer';
-import projectsAPI from '../api/projects';
+import projectsAPI from '../api/project';
 
 const Project = () => {
   const { id } = useParams();
