@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import logo from '../style/assets/logo.svg';
-import projectsAPI from '../..api/projects';
-import programsAPI from '../../api/programs';
+import projectsAPI from '../..api/project';
+import programsAPI from '../../api/programm';
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
