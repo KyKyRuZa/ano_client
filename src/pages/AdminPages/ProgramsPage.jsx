@@ -89,7 +89,6 @@ const ProgramsPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Проверка: id должен быть числом и больше 0 при редактировании
     if (isEditing && (!currentProgram.id || isNaN(currentProgram.id))) {
       console.error('Ошибка: ID программы отсутствует или неверен');
       setError('ID программы должен быть числом');
@@ -104,6 +103,8 @@ const ProgramsPage = () => {
         media_type: currentProgram.media_type
       };
 
+      console.log('Отправляемые данные:', programData); // Добавить отладку
+
       let updatedOrCreated;
 
       if (isEditing) {
@@ -117,7 +118,8 @@ const ProgramsPage = () => {
       setIsModalOpen(false);
     } catch (err) {
       console.error('Ошибка при сохранении программы:', err);
-      setError(err.message || 'Ошибка при сохранении программы');
+      console.error('Детали ошибки:', err.response?.data); // Добавить детали
+      setError(err.response?.data?.error || err.message || 'Ошибка при сохранении программы');
     }
   };
 
