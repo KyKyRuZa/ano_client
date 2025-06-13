@@ -23,10 +23,15 @@ const HeroSection = () => {
       <div className="video-container">
         <video 
           ref={videoRef}  
-          loop 
+          loop
+          playsInline
           className="video-banner"
+          fetchPriority="high"
+          loading="eager"
+          aria-label="Баннерное видео"
         >
-          <source src={video} type="video/mp4" />
+         <source src={video} type="video/mp4" />
+          Ваш браузер не поддерживает видео.
         </video>
         <button onClick={handlePlayPause} className="video-control">
           <FontAwesomeIcon icon={isPlaying ?  faPlay : faPause} />

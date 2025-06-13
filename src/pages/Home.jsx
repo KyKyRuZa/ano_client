@@ -34,7 +34,7 @@ const Home = () => {
         <CircleAnimation isAnimationComplete={!isAnimating} />
         <div style={{ 
           opacity: showContent ? 1 : 0,
-          transition: 'opacity 0.5s ease-in-out', // Faster fade-in
+          transition: 'opacity 0.5s ease-in-out',
         }}>
           <HeroSection />
           <About />
