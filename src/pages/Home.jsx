@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import HeroSection from '../components/HeroSection';
 import LogosSection from '../components/LogosSection';
-import MapSection from '../components/Map';
-import '../style/app.css';
+import MapSection from '../components/MapSection';
 import About from '../components/About';
 import CircleAnimation from '../components/CircleAnimation';
-import News from './News';
+import MessageList from '../components/MessageList';
 import Header from '../components/ux/Header';
 import Footer from '../components/ux/Footer';
+
+import '../style/global.css'
+import '../style/home/header.css'
+import '../style/home/footer.css'
+import '../style/home/media.css'
 
 const Home = () => {
   const [showContent, setShowContent] = useState(() => sessionStorage.getItem('hasVisited'));
@@ -38,7 +42,7 @@ const Home = () => {
         }}>
           <HeroSection />
           <About />
-          <News/>
+          <MessageList/>
           <LogosSection />
           <MapSection />
         </div>

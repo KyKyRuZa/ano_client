@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import programApi from '../api/program';
-import '../style/programs.css';
+import '../style/home/programs.css';
 import Header from '../components/ux/Header'; 
 import Footer from '../components/ux/Footer'; 
 

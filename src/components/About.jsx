@@ -1,5 +1,5 @@
 import React from 'react';
-
+import '../style/home/about.css';
 const About = () => (
   <section className="about">
     <div className="about-container">

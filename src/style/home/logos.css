@@ -1,0 +1,25 @@
+.logos-container {
+  overflow: hidden;
+  width: 100%;
+  position: relative;
+}
+.logos-track {
+  display: flex;
+  gap: 32px;
+  will-change: transform;
+  transition: transform linear;
+}
+.logo-box {
+  width: 200px;
+  height: 100px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.logo-box img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}

@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState, useMemo } from 'react';
-import '../style/logos.css';
+import '../style/home/logos.css';
 
 const LogosSection = () => {
   const totalPartners = 40;

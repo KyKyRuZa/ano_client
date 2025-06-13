@@ -2,6 +2,7 @@
     width: 282px;
     background-color: #BC0308;
     height: 100vh;
+    transition: all 0.3s ease;
 }
 .admin-logo{
     width: 184px;
@@ -18,7 +19,6 @@
     padding: 18px 28px;
 }
 .nav-item{
-    
     padding: 18px 28px;
     cursor: pointer;
     font-weight: 400;
@@ -205,12 +205,6 @@
         left: 12px;
         gap: 4px;
     }
-    
-    
-   
 }
 
-/* Дополнительные стили для плавности */
-.sidebar * {
-    transition: all 0.3s ease;
-}
+

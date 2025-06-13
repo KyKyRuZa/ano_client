@@ -9,7 +9,7 @@ import {
   faChevronRight 
 } from '@fortawesome/free-solid-svg-icons';
 import { fetchMessages } from '../api/news';
-import '../style/news.css';
+import '../style/home/news.css';
 
 
 function MessageList() {
@@ -67,7 +67,7 @@ function MessageList() {
       ))}
     </div>
   </div>
-);
+  );
 
   useEffect(() => {
     const getMessages = async () => {
@@ -409,35 +409,38 @@ function MessageList() {
 
 
   return (
-    <div className="message-list-container">
-      <div className="message-list">
-        {getCurrentPageMessages().map((message, index) => (
-          <div 
-            key={message.id} 
-            className="message-card"
-            ref={index === getCurrentPageMessages().length - 1 ? lastMessageElementRef : null}
-          >
-            <div className="message-content">
-              {renderMediaContent(message)}
-              {message.text && <p className="message-text">{message.text}</p>}
-              
-              <div className="message-footer">
-                <span className="message-date">
-                  {new Date(message.timestamp).toLocaleString('ru-RU', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                  })}
-                </span>
+  <div className="news-container">
+      <h2>Новости и объявления</h2>
+      <div className="message-list-container">
+        <div className="message-list">
+          {getCurrentPageMessages().map((message, index) => (
+            <div 
+              key={message.id} 
+              className="message-card"
+              ref={index === getCurrentPageMessages().length - 1 ? lastMessageElementRef : null}
+            >
+              <div className="message-content">
+                {renderMediaContent(message)}
+                {message.text && <p className="message-text">{message.text}</p>}
+                
+                <div className="message-footer">
+                  <span className="message-date">
+                    {new Date(message.timestamp).toLocaleString('ru-RU', {
+                      day: '2-digit',
+                      month: '2-digit',
+                      year: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
+        
+        {renderPagination()}
       </div>
-      
-      {renderPagination()}
     </div>
   );
 }

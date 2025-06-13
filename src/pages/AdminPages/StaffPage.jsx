@@ -8,7 +8,7 @@ import {
   faTimes
 } from '@fortawesome/free-solid-svg-icons';
 import staffApi from '../../api/staff';
-import '../../style/admin.staff.css';
+import '../../style/admin/admin.staff.css';
 
 const StaffPage = () => {
   const [staff, setStaff] = useState([]);

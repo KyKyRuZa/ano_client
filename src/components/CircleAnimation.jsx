@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import "../style/loading.css";
+import "../style/home/loading.css";
 import { ReactComponent as Hart } from "../style/assets/logo.svg";
 
 const CircleAnimation = ({ isAnimationComplete }) => {

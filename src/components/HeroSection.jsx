@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPause, faPlay } from '@fortawesome/free-solid-svg-icons';
 import video from '../style/assets/video.mp4';
+import '../style/home/hero.css';
 
 const HeroSection = () => {
   const [isPlaying, setIsPlaying] = useState(true);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import '../style/staff.css';
+import '../style/home/staff.css';
 import Header from '../components/ux/Header';
 import Footer from '../components/ux/Footer';
 import staffApi from '../api/staff';

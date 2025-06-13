@@ -1,4 +1,5 @@
 import React from 'react';
+import '../style/home/map-contact.css';
 
 const MapSection = () => (
   <section className="map-section">

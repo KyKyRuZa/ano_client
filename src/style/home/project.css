@@ -1,7 +1,4 @@
-/* =================== 
-   PROJECT PAGE STYLES
-   =================== */
-.program-content {
+.project-container {
   margin-top: 120px;
   max-width: 1200px;
   margin-left: auto;
@@ -10,26 +7,24 @@
   background: #fff;
 }
 
-.program-content .program-title {
+.project-container .title {
   display: flex;
   align-items: center;
   gap: 32px;
-  
-}
-.program-header{
-  display: flex;
-  flex-direction: row;
   margin-bottom: 48px;
   padding-bottom: 32px;
   border-bottom: 2px solid #BC0308;
 }
-.program-content .program-title img {
+
+.project-container .title img {
   width: 120px;
   height: 120px;
   object-fit: cover;
+
 }
 
-.program-content .program-title h1 {
+
+.project-container .title h1 {
   font-size: 42px;
   color: #BC0308;
   font-weight: 600;
@@ -37,7 +32,7 @@
   margin: 0;
 }
 
-.program-content .discription {
+.project-container .discription {
   font-size: 18px;
   line-height: 1.8;
   color: #333333;
@@ -49,48 +44,48 @@
    PROJECT PAGE MEDIA QUERIES
    =================== */
 @media (max-width: 1024px) {
-  .program-content {
+  .project-container {
     padding: 60px 24px;
   }
   
-  .program-content .program-title {
+  .project-container .title {
     gap: 24px;
     margin-bottom: 36px;
   }
   
-  .program-content .program-title h1 {
+  .project-container .title h1 {
     font-size: 36px;
   }
   
-  .program-content .discription {
+  .project-container .discription {
     font-size: 17px;
     padding: 24px;
   }
 }
 
 @media (max-width: 768px) {
-  .program-content {
+  .project-container {
     margin-top: 115px;
     padding: 40px 16px;
   }
   
-  .program-content .program-title {
+  .project-container .title {
     flex-direction: column;
     text-align: center;
     gap: 20px;
     margin-bottom: 32px;
   }
   
-  .program-content .program-title img {
+  .project-container .title img {
     width: 100px;
     height: 100px;
   }
   
-  .program-content .program-title h1 {
+  .project-container .title h1 {
     font-size: 30px;
   }
   
-  .program-content .discription {
+  .project-container .discription {
     font-size: 16px;
     line-height: 1.6;
     padding: 20px;
@@ -99,21 +94,21 @@
 }
 
 @media (max-width: 426px) {
-  .program-content {
+  .project-container {
     margin-top: 110px;
     padding: 32px 12px;
   }
   
-  .program-content .program-title img {
+  .project-container .title img {
     width: 80px;
     height: 80px;
   }
   
-  .program-content .program-title h1 {
+  .project-container .title h1 {
     font-size: 24px;
   }
   
-  .program-content .discription {
+  .project-container .discription {
     font-size: 14px;
     line-height: 1.5;
     padding: 16px;
