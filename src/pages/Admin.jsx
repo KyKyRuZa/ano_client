@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, Routes, Route } from 'react-router-dom';
 import logo from '../style/assets/logo.svg';
 import '../style/admin.css';
+import authApi from '../api/auth';
 
 import StaffPage from './AdminPages/StaffPage';
 import ProgramsPage from './AdminPages/ProgramsPage';
@@ -13,7 +14,7 @@ const NavItem = ({ text, path, onClick }) => {
 
   const handleClick = () => {
     navigate(path);
-    if (onClick) onClick(); // Закрываем мобильное меню при клике на пункт
+    if (onClick) onClick(); 
   };
 
   return (
@@ -56,9 +57,27 @@ const Navbar = ({ isOpen, toggleMenu }) => {
 };
 
 const AdminLayout = () => {
-  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
-  const [isAnimatingOut, setIsAnimatingOut] = React.useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isAnimatingOut, setIsAnimatingOut] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const checkAuthentication = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (token) {
+          await authApi.getProfile();
+          setIsLoggedIn(true);
+        }
+      } catch (error) {
+        setIsLoggedIn(false);
+        localStorage.removeItem('token');
+        console.log('Ошибка аутентификации:', error);
+      }
+    };
+
+    checkAuthentication();
+  }, []);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -67,9 +86,7 @@ const AdminLayout = () => {
   const handleLogin = (success) => {
     if (success) {
       setIsAnimatingOut(true);
-
       setTimeout(() => {
-        localStorage.setItem('isAdmin', 'true');
         setIsLoggedIn(true);
       }, 300);
     }
@@ -77,7 +94,6 @@ const AdminLayout = () => {
 
   return (
     <div className="admin-layout">
-      {/* Burger menu button for mobile */}
       {isLoggedIn && (
         <button 
           className={`mobile-menu-btn ${isMobileMenuOpen ? 'open' : ''}`} 

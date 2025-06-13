@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import logo from '../../style/assets/logo.svg';
 import projectsAPI from '../../api/project';
-import programsAPI from '../../api/programm';
+import programsAPI from '../../api/program';
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,8 +22,8 @@ const Header = () => {
       try {
         setLoading(true);
         const [projectsData, programsData] = await Promise.all([
-          projectsAPI.getAllProjects(),
-          programsAPI.getAllPrograms()
+          projectsAPI.getAll(),
+          programsAPI.getAll()
         ]);
         setProjects(projectsData || []);
         setPrograms(programsData || []);

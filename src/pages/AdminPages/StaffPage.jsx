@@ -8,43 +8,56 @@ import {
   faTimes
 } from '@fortawesome/free-solid-svg-icons';
 import staffApi from '../../api/staff';
-import '../../style/admin.staff.css'
+import '../../style/admin.staff.css';
 
 const StaffPage = () => {
   const [staff, setStaff] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentStaff, setCurrentStaff] = useState({
     id: null,
-    name: '',
+    fullname: '',
     position: '',
     callsign: '',
-    about: '',
-    photo: null
+    description: '',
+    media: null
   });
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
-    const fetchStaff = async () => {
-      try {
-        const staffData = await staffApi.getAllStaff();
-        setStaff(staffData);
-      } catch (err) {
-        setError(err.message || 'Ошибка загрузки данных');
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchStaff();
   }, []);
 
+  const fetchStaff = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const staffData = await staffApi.getAll();
+      setStaff(Array.isArray(staffData) ? staffData : []);
+    } catch (err) {
+      console.error('Ошибка загрузки сотрудников:', err);
+      const errorMessage =
+        err.response?.data?.error || err.message || 'Ошибка загрузки сотрудников';
+      setError(errorMessage);
+      setStaff([]); // Устанавливаем пустой массив при ошибке
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleInputChange = (e) => {
     const { name, value, files } = e.target;
-    if (name === 'photo') {
-      setCurrentStaff((prev) => ({ ...prev, photo: files[0] }));
+    if (name === 'media') {
+      const file = files[0];
+      if (file && file.type.startsWith('image/')) {
+        setCurrentStaff((prev) => ({
+          ...prev,
+          media: file
+        }));
+      } else if (file) {
+        alert('Можно загружать только изображения');
+      }
     } else {
       setCurrentStaff((prev) => ({ ...prev, [name]: value }));
     }
@@ -53,67 +66,88 @@ const StaffPage = () => {
   const openAddModal = () => {
     setCurrentStaff({
       id: null,
-      name: '',
+      fullname: '',
       position: '',
       callsign: '',
-      about: '',
-      photo: null
+      description: '',
+      media: null
     });
     setIsEditing(false);
     setIsModalOpen(true);
   };
 
   const openEditModal = (employee) => {
-    setCurrentStaff(employee);
+    setCurrentStaff({
+      ...employee,
+      media: null // Сбрасываем медиафайл для редактирования
+    });
     setIsEditing(true);
     setIsModalOpen(true);
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  try {
-    const formData = new FormData();
-    Object.entries(currentStaff).forEach(([key, value]) => {
-      if (value !== null && value !== undefined) {
-        formData.append(key, value);
-      }
-    });
+    e.preventDefault();
 
-    if (isEditing) {
-      try {
-        const updated = await staffApi.updateStaff(currentStaff.id, formData);
-        setStaff(staff.map(emp => (emp.id === updated.id ? updated : emp)));
-      } catch (updateError) {
-        console.error('Update error details:', updateError.response ? updateError.response.data : updateError);
-        throw updateError;
-      }
-    } else {
-      try {
-        const created = await staffApi.createStaff(formData);
-        setStaff([...staff, created]);
-      } catch (createError) {
-        console.error('Create error details:', createError.response ? createError.response.data : createError);
-        throw createError;
-      }
+    if (!currentStaff.fullname || !currentStaff.position) {
+      setError('ФИО и должность обязательны');
+      return;
     }
-    setIsModalOpen(false);
-  } catch (err) {
-    console.error('Detailed error:', err);
-    alert(`Не удалось сохранить данные сотрудника: ${err.message}`);
-  }
-};
 
+    const formData = new FormData();
+    formData.append('fullname', currentStaff.fullname);
+    formData.append('position', currentStaff.position);
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('Вы уверены, что хотите удалить этого сотрудника?')) return;
+    if (currentStaff.callsign) formData.append('callsign', currentStaff.callsign);
+    if (currentStaff.description) formData.append('description', currentStaff.description);
+    if (currentStaff.media instanceof File) formData.append('media', currentStaff.media);
 
     try {
-      await staffApi.deleteStaff(id);
-      setStaff(staff.filter(emp => emp.id !== id));
+      if (isEditing) {
+        await staffApi.update(currentStaff.id, formData);
+      } else {
+        await staffApi.create(formData);
+      }
+
+      fetchStaff();
+      setIsModalOpen(false);
     } catch (err) {
-      console.error('Ошибка удаления:', err);
-      alert('Не удалось удалить сотрудника');
+      console.error('Ошибка при сохранении:', err);
+      const errorMessage = err.response?.data?.error || err.message || 'Не удалось сохранить данные сотрудника';
+      setError(errorMessage);
     }
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm('Вы уверены, что хотите удалить этого сотрудника?')) {
+        try {
+            await staffApi.delete(id);
+            setStaff(staff.filter(s => s.id !== id));
+        } catch (err) {
+            console.error('Ошибка удаления сотрудника:', err);
+            const errorMessage = err.response?.data?.error || 
+                                 err.message || 
+                                 'Ошибка при удалении сотрудника';
+            setError(errorMessage);
+            
+            // Optional: Show a user-friendly error notification
+            alert(errorMessage);
+        }
+    }
+};
+
+  const renderMediaPreview = (employee) => {
+    if (!employee.media) return <span>-</span>;
+
+    if (typeof employee.media === 'string') {
+      return (
+        <img
+          src={`http://localhost:8000/${employee.media}`}
+          alt={employee.fullname}
+          className="staff-photo"
+        />
+      );
+    }
+    return <span>-</span>;
   };
 
   if (loading) return <div className="loading">Загрузка...</div>;
@@ -128,31 +162,46 @@ const StaffPage = () => {
         </button>
       </div>
 
-      {/* Таблица с данными */}
       <div className="table-container">
         <table className="admin-table">
           <thead>
             <tr>
+              <th>Фото</th>
               <th>ФИО</th>
               <th>Должность</th>
               <th>Позывной</th>
-              <th>О сотруднике</th>
+              <th>Описание</th>
               <th>Действия</th>
             </tr>
           </thead>
           <tbody>
             {staff.map((employee) => (
               <tr key={employee.id}>
-                <td>{employee.name}</td>
+                <td>{renderMediaPreview(employee)}</td>
+                <td>{employee.fullname}</td>
                 <td>{employee.position}</td>
                 <td>{employee.callsign || '-'}</td>
-                <td>{employee.about || '-'}</td>
+                <td>
+                  {employee.description
+                    ? employee.description.length > 50
+                      ? `${employee.description.substring(0, 50)}...`
+                      : employee.description
+                    : '-'}
+                </td>
                 <td>
                   <div className="action-buttons">
-                    <button className="btn btn-edit" onClick={() => openEditModal(employee)}>
+                    <button
+                      className="btn btn-edit"
+                      onClick={() => openEditModal(employee)}
+                      title="Редактировать"
+                    >
                       <FontAwesomeIcon icon={faEdit} />
                     </button>
-                    <button className="btn btn-delete" onClick={() => handleDelete(employee.id)}>
+                    <button
+                      className="btn btn-delete"
+                      onClick={() => handleDelete(employee.id)}
+                      title="Удалить"
+                    >
                       <FontAwesomeIcon icon={faTrash} />
                     </button>
                   </div>
@@ -170,30 +219,69 @@ const StaffPage = () => {
             <h2>{isEditing ? 'Редактировать сотрудника' : 'Добавить сотрудника'}</h2>
             <form onSubmit={handleSubmit}>
               <div className="form-group">
-                <label>ФИО</label>
-                <input type="text" name="name" value={currentStaff.name} onChange={handleInputChange} required />
+                <label>ФИО *</label>
+                <input
+                  type="text"
+                  name="fullname"
+                  value={currentStaff.fullname}
+                  onChange={handleInputChange}
+                  required
+                />
               </div>
+
               <div className="form-group">
-                <label>Должность</label>
-                <input type="text" name="position" value={currentStaff.position} onChange={handleInputChange} required />
+                <label>Должность *</label>
+                <input
+                  type="text"
+                  name="position"
+                  value={currentStaff.position}
+                  onChange={handleInputChange}
+                  required
+                />
               </div>
+
               <div className="form-group">
                 <label>Позывной</label>
-                <input type="text" name="callsign" value={currentStaff.callsign} onChange={handleInputChange} />
+                <input
+                  type="text"
+                  name="callsign"
+                  value={currentStaff.callsign || ''}
+                  onChange={handleInputChange}
+                />
               </div>
+
               <div className="form-group">
-                <label>О сотруднике</label>
-                <textarea name="about" value={currentStaff.about} onChange={handleInputChange} />
+                <label>Описание</label>
+                <textarea
+                  name="description"
+                  value={currentStaff.description || ''}
+                  onChange={handleInputChange}
+                  rows="4"
+                />
               </div>
+
               <div className="form-group">
                 <label>Фото</label>
-                <input type="file" name="photo" accept="image/*" onChange={handleInputChange} />
+                <input
+                  type="file"
+                  name="media"
+                  accept="image/*"
+                  onChange={handleInputChange}
+                />
+                {isEditing && currentStaff.media && (
+                  <small>Новое фото заменит текущее</small>
+                )}
               </div>
+
               <div className="modal-actions">
                 <button type="submit" className="btn btn-save">
                   <FontAwesomeIcon icon={faSave} /> Сохранить
                 </button>
-                <button type="button" className="btn btn-cancel" onClick={() => setIsModalOpen(false)}>
+                <button
+                  type="button"
+                  className="btn btn-cancel"
+                  onClick={() => setIsModalOpen(false)}
+                >
                   <FontAwesomeIcon icon={faTimes} /> Отмена
                 </button>
               </div>

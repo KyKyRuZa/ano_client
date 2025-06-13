@@ -14,7 +14,7 @@ const StaffPage = () => {
   useEffect(() => {
     const fetchStaff = async () => {
       try {
-        const staffData = await staffApi.getAllStaff();
+        const staffData = await staffApi.getAll();
         setStaff(staffData);
         setLoading(false);
       } catch (err) {
@@ -56,24 +56,24 @@ const StaffPage = () => {
           {staff.map((member) => (
             <div key={member.id} className="staff-card">
               <div className="staff-card-avatar">
-                {member.photo ? (
+                {member.media ? (
                   <img 
-                    src={`https://anotsenimzhizn.ru${member.photo}`} 
-                    alt={member.name} 
+                    src={`http://localhost:8000/${member.media}`} 
+                    alt={member.fullname} 
                   />
                 ) : (
                   <FontAwesomeIcon icon={faUser} className="default-avatar" />
                 )}
               </div>
               <div className="staff-card-content">
-                <h3>{member.name}</h3>
+                <h3>{member.fullname}</h3>
                 <p className="staff-position">{member.position}</p>
                 <p className="staff-department">
                   {member.callsign || 'Отдел не указан'}
                 </p>
-                {member.about && (
-                  <div className="staff-about">
-                    <p>{member.about}</p>
+                {member.description && (
+                  <div className="staff-description">
+                    <p>{member.description}</p>
                   </div>
                 )}
               </div>

@@ -5,60 +5,56 @@ import {
   faTrash,
   faPlus,
   faSave,
-  faTimes,
-  faEye
+  faTimes
 } from '@fortawesome/free-solid-svg-icons';
-import programAPI from '../../api/programm';
+import programApi from '../../api/program';
 import '../../style/admin.staff.css';
 
 const ProgramsPage = () => {
   const [programs, setPrograms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentProgram, setCurrentProgram] = useState({
     id: null,
     title: '',
     description: '',
-    file: null,
-    media_type: ''
+    media: null
   });
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
-    const fetchPrograms = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const programsData = await programAPI.getAllPrograms();
-        console.log('Loaded programs:', programsData);
-        setPrograms(Array.isArray(programsData) ? programsData : []);
-      } catch (err) {
-        console.error('Error in fetchPrograms:', err);
-        const errorMessage = err.response?.data?.error || err.message || 'Ошибка загрузки программ';
-        setError(errorMessage);
-        setPrograms([]); // Устанавливаем пустой массив при ошибке
-      } finally {
-        setLoading(false);
-      }
-};
-
-
     fetchPrograms();
   }, []);
 
+  const fetchPrograms = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const programsData = await programApi.getAll();
+      setPrograms(Array.isArray(programsData) ? programsData : []);
+    } catch (err) {
+      console.error('Ошибка загрузки программ:', err);
+      const errorMessage =
+        err.response?.data?.error || err.message || 'Ошибка загрузки программ';
+      setError(errorMessage);
+      setPrograms([]); 
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleInputChange = (e) => {
     const { name, value, files } = e.target;
-    if (name === 'file') {
+    if (name === 'media') {
       const file = files[0];
-      if (file) {
-        setCurrentProgram((prev) => ({ 
-          ...prev, 
-          file: file,
-          media_type: file.type.startsWith('image/') ? 'image' : 
-                     file.type.startsWith('video/') ? 'video' : 'document'
+      if (file && file.type.startsWith('image/')) {
+        setCurrentProgram((prev) => ({
+          ...prev,
+          media: file
         }));
+      } else if (file) {
+        alert('Можно загружать только изображения');
       }
     } else {
       setCurrentProgram((prev) => ({ ...prev, [name]: value }));
@@ -70,8 +66,7 @@ const ProgramsPage = () => {
       id: null,
       title: '',
       description: '',
-      file: null,
-      media_type: ''
+      media: null
     });
     setIsEditing(false);
     setIsModalOpen(true);
@@ -80,98 +75,89 @@ const ProgramsPage = () => {
   const openEditModal = (program) => {
     setCurrentProgram({
       ...program,
-      file: null // Сбрасываем файл для редактирования
+      media: null
     });
     setIsEditing(true);
     setIsModalOpen(true);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+ const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    if (isEditing && (!currentProgram.id || isNaN(currentProgram.id))) {
-      console.error('Ошибка: ID программы отсутствует или неверен');
-      setError('ID программы должен быть числом');
-      return;
+  // Валидация
+  if (!currentProgram.title || !currentProgram.description) {
+    setError('Название и описание программы обязательны');
+    return;
+  }
+
+  // Создание FormData
+  const formData = new FormData();
+  formData.append('title', currentProgram.title);
+  formData.append('description', currentProgram.description);
+
+  // Добавление медиафайла, если он существует
+  if (currentProgram.media instanceof File) {
+    formData.append('media', currentProgram.media);
+  }
+
+  try {
+    // Логирование данных перед отправкой
+    console.log('Отправляю данные:', Object.fromEntries(formData));
+
+    // Отправка запроса
+    if (isEditing) {
+      await programApi.update(currentProgram.id, formData);
+    } else {
+      await programApi.create(formData);
     }
 
-    try {
-      const programData = {
-        title: currentProgram.title,
-        description: currentProgram.description,
-        file: currentProgram.file,
-        media_type: currentProgram.media_type
-      };
-
-      console.log('Отправляемые данные:', programData); // Добавить отладку
-
-      let updatedOrCreated;
-
-      if (isEditing) {
-        updatedOrCreated = await programAPI.updateProgram(currentProgram.id, programData);
-        setPrograms(programs.map(prog => (prog.id === updatedOrCreated.id ? updatedOrCreated : prog)));
-      } else {
-        updatedOrCreated = await programAPI.createProgram(programData);
-        setPrograms([...programs, updatedOrCreated]);
-      }
-
-      setIsModalOpen(false);
-    } catch (err) {
-      console.error('Ошибка при сохранении программы:', err);
-      console.error('Детали ошибки:', err.response?.data); // Добавить детали
-      setError(err.response?.data?.error || err.message || 'Ошибка при сохранении программы');
-    }
-  };
+    // Обновление списка программ и закрытие модального окна
+    fetchPrograms();
+    setIsModalOpen(false);
+  } catch (err) {
+    console.error('Ошибка при сохранении:', err);
+    const errorMessage =
+      err.response?.data?.error || err.message || 'Не удалось сохранить данные программы';
+    setError(errorMessage);
+  }
+};
 
   const handleDelete = async (id) => {
     if (window.confirm('Вы уверены, что хотите удалить эту программу?')) {
       try {
-        await programAPI.deleteProgram(id);
-        setPrograms(programs.filter(prog => prog.id !== id));
+        await programApi.delete(id);
+        setPrograms(programs.filter(p => p.id !== id));
       } catch (err) {
-        console.error('Ошибка удаления:', err);
+        console.error('Ошибка удаления программы:', err);
         setError(err.message || 'Ошибка при удалении программы');
       }
     }
   };
 
-  const getMediaTypeText = (mediaType) => {
-    const typeMap = {
-      'image': 'Изображение',
-      'video': 'Видео',
-      'document': 'Документ'
-    };
-    return typeMap[mediaType] || mediaType || '-';
-  };
-
-  const getMediaTypeClass = (mediaType) => {
-    const typeClasses = {
-      'image': 'media-image',
-      'video': 'media-video',
-      'document': 'media-document'
-    };
-    return typeClasses[mediaType] || '';
-  };
-
   const renderMediaPreview = (program) => {
-    if (!program.file) return null;
-    
-    if (program.media_type === 'image') {
+    if (!program.media) return <span>-</span>;
+
+    if (typeof program.media === 'string') {
       return (
-        <img 
-          src={program.file} 
+        <img
+          src={program.media}
           alt={program.title}
-          className="media-preview-small"
-          style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px' }}
+          className="program-photo-thumbnail"
         />
       );
     }
-    
-    return (
-      <span className="media-indicator">
-        <FontAwesomeIcon icon={faEye} />
-      </span>
-    );
+
+    if (program.media instanceof File) {
+      return (
+        <img
+          src={URL.createObjectURL(program.media)}
+          alt={program.title}
+          className="program-photo-thumbnail"
+        />
+      );
+    }
+
+    return <span>-</span>;
   };
 
   if (loading) return <div className="loading">Загрузка...</div>;
@@ -180,63 +166,43 @@ const ProgramsPage = () => {
   return (
     <div className="admin-page">
       <div className="page-header">
-        <h1>Управление программами</h1>
+        <h1>Программы организации</h1>
         <button className="btn btn-add" onClick={openAddModal}>
           <FontAwesomeIcon icon={faPlus} /> Добавить программу
         </button>
       </div>
 
-      {/* Таблица с программами */}
       <div className="table-container">
         <table className="admin-table">
           <thead>
             <tr>
               <th>Название</th>
               <th>Описание</th>
-              <th>Медиа</th>
-              <th>Тип медиа</th>
               <th>Действия</th>
             </tr>
           </thead>
           <tbody>
             {programs.map((program) => (
               <tr key={program.id}>
+                <td>{program.title}</td>
                 <td>
-                  <div className="project-title">
-                    {program.title}
-                  </div>
-                </td>
-                <td>
-                  <div className="project-description">
-                    {program.description ? 
-                      (program.description.length > 100 ? 
-                        `${program.description.substring(0, 100)}...` : 
-                        program.description
-                      ) : '-'
-                    }
-                  </div>
-                </td>
-                <td>
-                  <div className="media-cell">
-                    {renderMediaPreview(program)}
-                  </div>
-                </td>
-                <td>
-                  <span className={`media-type-badge ${getMediaTypeClass(program.media_type)}`}>
-                    {getMediaTypeText(program.media_type)}
-                  </span>
+                  {program.description
+                    ? program.description.length > 50
+                      ? `${program.description.substring(0, 50)}...`
+                      : program.description
+                    : '-'}
                 </td>
                 <td>
                   <div className="action-buttons">
-                    <button 
-                      className="btn btn-edit" 
+                    <button
+                      className="btn btn-edit"
                       onClick={() => openEditModal(program)}
                       title="Редактировать"
                     >
                       <FontAwesomeIcon icon={faEdit} />
                     </button>
-                    <button 
-                      className="btn btn-delete" 
+                    <button
+                      className="btn btn-delete"
                       onClick={() => handleDelete(program.id)}
                       title="Удалить"
                     >
@@ -257,61 +223,47 @@ const ProgramsPage = () => {
             <h2>{isEditing ? 'Редактировать программу' : 'Добавить программу'}</h2>
             <form onSubmit={handleSubmit}>
               <div className="form-group">
-                <label>Название программы *</label>
-                <input 
-                  type="text" 
-                  name="title" 
-                  value={currentProgram.title} 
-                  onChange={handleInputChange} 
-                  required 
+                <label>Название *</label>
+                <input
+                  type="text"
+                  name="title"
+                  value={currentProgram.title}
+                  onChange={handleInputChange}
+                  required
                 />
               </div>
-              
+
               <div className="form-group">
-                <label>Описание</label>
-                <textarea 
-                  name="description" 
-                  value={currentProgram.description} 
+                <label>Описание *</label>
+                <textarea
+                  name="description"
+                  value={currentProgram.description}
                   onChange={handleInputChange}
                   rows="4"
-                  placeholder="Описание программы..."
+                  required
                 />
               </div>
-              
+
               <div className="form-group">
-                <label>Файл программы</label>
-                <input 
-                  type="file" 
-                  name="file" 
-                  accept="image/*,video/*,.pdf,.doc,.docx" 
-                  onChange={handleInputChange} 
+                <label>Изображение</label>
+                <input
+                  type="file"
+                  name="media"
+                  accept="image/*"
+                  onChange={handleInputChange}
                 />
-                {isEditing && (
-                  <small className="form-hint">
-                    Оставьте пустым, если не хотите изменять файл
-                  </small>
+                {isEditing && currentProgram.media && (
+                  <small>Новое изображение заменит текущее</small>
                 )}
               </div>
 
-              {currentProgram.media_type && (
-                <div className="form-group">
-                  <label>Тип медиа</label>
-                  <input 
-                    type="text" 
-                    value={getMediaTypeText(currentProgram.media_type)}
-                    disabled
-                    className="form-control-disabled"
-                  />
-                </div>
-              )}
-              
               <div className="modal-actions">
                 <button type="submit" className="btn btn-save">
                   <FontAwesomeIcon icon={faSave} /> Сохранить
                 </button>
-                <button 
-                  type="button" 
-                  className="btn btn-cancel" 
+                <button
+                  type="button"
+                  className="btn btn-cancel"
                   onClick={() => setIsModalOpen(false)}
                 >
                   <FontAwesomeIcon icon={faTimes} /> Отмена
