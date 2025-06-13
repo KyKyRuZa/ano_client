@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://localhost:8000/api/staff';
+const BASE_URL = 'https://anotsenimzhizn.ru/api/staff';
 
 const staffApi = {
   getAll: async () => {

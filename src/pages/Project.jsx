@@ -51,7 +51,7 @@ const Programs = () => {
                         <div className='program-header'>
                             {program.media && (
                             <div className="program-image">
-                                <img src={`http://localhost:8000/${program.media}`} alt={program.title} />
+                                <img src={`https://anotsenimzhizn.ru/${program.media}`} alt={program.title} />
                             </div>
                             )} 
                             <h1 className="program-title">{program.title}</h1>

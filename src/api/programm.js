@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://localhost:8000/api/programs';
+const BASE_URL = 'https://anotsenimzhizn.ru/api/programs';
 
 const programApi = {
     getAll: async () => {

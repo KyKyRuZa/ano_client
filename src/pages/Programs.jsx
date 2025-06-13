@@ -1,84 +1,70 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import '../style/project.css'; 
-import programImage from '../style/assets/p-1.png';
-import Header from '../components/ux/Header';
-import Footer from '../components/ux/Footer';
-import programsAPI from '../api/programm';
+import programApi from '../api/program';
+import '../style/programs.css';
+import Header from '../components/ux/Header'; 
+import Footer from '../components/ux/Footer'; 
 
 const Programs = () => {
-  const { id } = useParams();
-  const [program, setProgram] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+    const { id } = useParams();
+    const [program, setProgram] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchProgram = async () => {
-      try {
-        setLoading(true);
-        const programData = await programsAPI.getProgramById(id);
-        setProgram(programData);
-      } catch (error) {
-        console.error('Ошибка при загрузке программы:', error);
-        setError('Не удалось загрузить программу');
-      } finally {
-        setLoading(false);
-      }
+    useEffect(() => {
+        fetchProgramDetails();
+    }, [id]);
+
+    const fetchProgramDetails = async () => {
+        try {
+            setLoading(true);
+            const programData = await programApi.getOne(id);
+            setProgram(programData);
+            setError(null);
+        } catch (err) {
+            console.error('Ошибка загрузки детальной информации о программе:', err);
+            setError('Не удалось загрузить информацию о программе');
+        } finally {
+            setLoading(false);
+        }
     };
 
-    if (id) {
-      fetchProgram();
+    // if (loading) {
+    //     return <div className="loading">Загрузка программы...</div>;
+    // }
+
+    // if (error) {
+    //     return <div className="error">{error}</div>;
+    // }
+
+    if (!program) {
+        return <div className="not-found">Программа не найдена</div>;
     }
-  }, [id]);
 
-  if (loading) {
     return (
-      <>
-        <Header/>
-        <div className="project-container">
-          <div>Загрузка...</div>
-        </div>
-        <Footer/>
-      </>
-    );
-  }
-
-  if (error || !program) {
-    return (
-      <>
-        <Header/>
-        <div className="project-container">
-          <div>{error || 'Программа не найдена'}</div>
-        </div>
-        <Footer/>
-      </>
-    );
-  }
-
-  return (
-    <>
-      <Header/>
-      <div className="project-container">
         <div>
-          <div className='title'> 
-            <img 
-              src={program.media_path || program.image || programImage} 
-              alt={program.title || program.name} 
-              onError={(e) => {
-                e.target.src = programImage;
-              }}
-            />
-            <h1>{program.title || program.name}</h1>
-          </div>
-        
-          <div className='discription'>
-            {program.description || program.content || 'Описание отсутствует'}
-          </div>
+            <Header />
+            <div className="program-page">
+                <div className="program-container">
+                    <div className="program-content">
+                        <div className='program-header'>
+                            {program.media && (
+                            <div className="program-image">
+                                <img src={`https://anotsenimzhizn.ru/${program.media}`} alt={program.title} />
+                            </div>
+                            )} 
+                            <h1 className="program-title">{program.title}</h1>
+                        </div>
+                        
+                        <div className="program-description">
+                            <p>{program.description}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <Footer />
         </div>
-      </div>
-      <Footer/>
-    </>
-  );
+    );
 };
 
 export default Programs;
