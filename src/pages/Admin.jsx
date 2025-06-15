@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, Routes, Route } from 'react-router-dom';
 import logo from '../style/assets/logo.svg';
 import '../style/admin/admin.css';
+import '../style/admin/media.css';
 import authApi from '../api/auth';
 
 import StaffPage from './AdminPages/StaffPage';

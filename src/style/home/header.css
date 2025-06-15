@@ -1,7 +1,6 @@
 .header {
   background: rgba(154, 0, 4, 0.7);
   color: #ffffff;
-  padding: 10px;
   position: fixed;
   top: 0;
   left: 0;
@@ -9,20 +8,25 @@
   z-index: 3;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(10px);
+  padding: 10px;
 }
-.banner {
-  width: 160px;
-  height: 100px;
-  object-fit: cover;
+.burger-logo,.nav-links span{
+  display: none;
+}
+
+.logo {
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
   position: absolute;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
   z-index: 1;
-  transition: 1s transform;
+  transition: transform 0.3s ease;
 }
-.banner:hover {
-  transform: translate(-50%, -50%) scale(1.1);
+.logo:hover {
+  transform: translate(-50%, -50%) scale(1.05);
 }
 .navbar {
   max-width: 1200px;
@@ -32,30 +36,49 @@
   align-items: center;
   position: relative;
   height: 100px;
+  transition: all 0.3s ease;
+
 }
+
 .burger-menu {
   display: none;
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  z-index: 1001;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
   cursor: pointer;
-  padding: 10px;
-  z-index: 101;
+  width: 50px;
+  height: 50px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.3s ease;
 }
 .burger-bar {
   display: block;
   width: 25px;
   height: 3px;
   margin: 5px auto;
-  background-color: white;
-  transition: all 0.3s ease-in-out;
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  background-color: black;
+  transition: all 0.3s ease;
 }
-.burger-bar.open:nth-child(1) {
-  transform: rotate(45deg) translate(5px, 5px);
+.burger-bar.open .burger-bar:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
 }
-.burger-bar.open:nth-child(2) {
+.burger-bar.open .burger-bar:nth-child(2) {
   opacity: 0;
 }
-.burger-bar.open:nth-child(3) {
-  transform: rotate(-45deg) translate(5px, -5px);
+.burger-bar.open .burger-bar:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
 }
+
+
 .nav-links {
   display: flex;
   gap: 32px;
@@ -64,7 +87,7 @@
 }
 .nav-links.active {
   top: 100%;
-  background: #9a0004f2;
+  background: #BC0308;
   flex-direction: column;
 }
 .nav-item {
@@ -89,9 +112,6 @@
   left: 0;
   top: 100%;
   min-width: 220px;
-  background: rgba(154, 0, 4, 0.95);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  border-radius: 4px;
   z-index: 1000;
   padding: 10px 0;
 }
@@ -106,20 +126,7 @@
 .dropdown-menu a:hover {
   background: rgba(255, 255, 255, 0.1);
 }
-.banner {
-  width: 160px;
-  height: 100px;
-  object-fit: contain;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1;
-  transition: transform 0.3s ease;
-}
-.banner:hover {
-  transform: translate(-50%, -50%) scale(1.05);
-}
+
 .contact-info {
   display: flex;
   gap: 32px;

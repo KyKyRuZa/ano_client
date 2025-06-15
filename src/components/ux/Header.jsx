@@ -62,13 +62,10 @@ const Header = () => {
           <span className={`burger-bar ${isOpen ? 'open' : ''}`}></span>
           <span className={`burger-bar ${isOpen ? 'open' : ''}`}></span>
         </div>
-        
         <ul className={`nav-links ${isOpen ? 'active' : ''}`}>
-          <Link
-            className='link'
-            onMouseEnter={() => setActiveDropdown('projects')}
-            onMouseLeave={() => setActiveDropdown(null)}
-          >
+          <Link to="/"><img src={logo} alt="Banner" className="burger-logo" /></Link>
+          <span>Меню навигации</span>
+          <Link className='link' onMouseEnter={() => setActiveDropdown('projects')} onMouseLeave={() => setActiveDropdown(null)}>
             Проекты
             <div className={`dropdown-menu ${activeDropdown === 'projects' ? 'show' : ''}`}>
               {loading ? (
@@ -91,11 +88,7 @@ const Header = () => {
               )}
             </div>
           </Link>
-          <Link
-            className='link'
-            onMouseEnter={() => setActiveDropdown('programs')}
-            onMouseLeave={() => setActiveDropdown(null)}
-          >
+          <Link className='link' onMouseEnter={() => setActiveDropdown('programs')} onMouseLeave={() => setActiveDropdown(null)} >
             Программы
             <div className={`dropdown-menu ${activeDropdown === 'programs' ? 'show' : ''}`}>
               {loading ? (
@@ -118,14 +111,10 @@ const Header = () => {
               )}
             </div>
           </Link>
-          <Link className='link' to="/personal/">
-              <div>
-                О персоналии
-              </div>
-          </Link>
+          <Link className='link' to="/personal/">Персоналии</Link>
         </ul>
         
-        <Link to="/"><img src={logo} alt="Banner" className="banner" /></Link>
+        <Link to="/"><img src={logo} alt="Banner" className="logo" /></Link>
         
         <div className="contact-info">
           <a href="tel:+79274819037">+7-927-481-90-37</a>
