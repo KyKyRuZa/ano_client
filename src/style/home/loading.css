@@ -17,12 +17,16 @@ html {
   background-color: #BC0308;
   z-index: 9999;
   transition: opacity 0.5s ease-out;
+  overflow: hidden;
+  padding: 40px;
+  box-sizing: border-box;
 }
 
 .canvas-container {
   position: relative;
   width: 500px;
   height: 500px;
+  aspect-ratio: 1;
 }
 
 .canvas {
@@ -39,6 +43,10 @@ html {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  width: auto;
+  height: auto;
+  max-width: 60%;
+  max-height: 60%;
 }
 
 .fade-out {
@@ -46,44 +54,100 @@ html {
   pointer-events: none;
 }
 
-
-
 /* Основной контент */
 .main-content {
   position: absolute;
   width: 100%;
   top: 0px;
-  opacity: 0; /* Начальная прозрачность */
-  transition: opacity 1s ease-in-out; /* Плавное появление */
-  visibility: hidden; /* Скрываем контент до появления */
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+  visibility: hidden;
 }
 
 .main-content.fade-in {
-  opacity: 1; /* Полная видимость */
-  visibility: visible; /* Показываем контент */
+  opacity: 1;
+  visibility: visible;
 }
 
-@media (max-width: 1024px) {
+/* 320px - Маленькие смартфоны */
+@media (max-width: 320px) {
+  .animate-container {
+    padding: 40px;
+  }
+  
   .canvas-container {
-    width: 500px;
-    height:500px;
+    width: 240px;
+    height: 240px;
   }
 }
 
-@media (max-width: 768px) {
+/* 375px - iPhone SE, iPhone 12 mini */
+@media (min-width: 321px) and (max-width: 375px) {
+  .animate-container {
+    padding: 40px;
+  }
+  
+  .canvas-container {
+    width: 295px;
+    height: 295px;
+  }
+}
+
+/* 425px - Большие смартфоны */
+@media (min-width: 376px) and (max-width: 425px) {
+  .animate-container {
+    padding: 40px;
+  }
+  
+  .canvas-container {
+    width: 345px;
+    height: 345px;
+  }
+}
+
+/* 768px - Планшеты */
+@media (min-width: 426px) and (max-width: 768px) {
+  .animate-container {
+    padding: 40px;
+  }
+  
+  .canvas-container {
+    width: 400px;
+    height: 400px;
+  }
+}
+
+/* 1024px - Планшеты в ландшафте, маленькие ноутбуки */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .animate-container {
+    padding: 40px;
+  }
+  
+  .canvas-container {
+    width: 450px;
+    height: 450px;
+  }
+}
+
+/* 1440px+ - Десктопы */
+@media (min-width: 1025px) {
+  .animate-container {
+    padding: 40px;
+  }
+  
   .canvas-container {
     width: 500px;
     height: 500px;
   }
 }
 
-@media (max-width: 480px) {
-  .canvas-container {
-    width: 400px;
-    height: 400px;
+/* Для очень низких экранов */
+@media (max-height: 400px) {
+  .animate-container {
+    padding: 20px;
   }
   
-  .hart {
+  .canvas-container {
     width: 200px;
     height: 200px;
   }

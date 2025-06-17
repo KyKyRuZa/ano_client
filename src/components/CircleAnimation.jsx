@@ -1,20 +1,18 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import "../style/home/loading.css";
 import { ReactComponent as Hart } from "../style/assets/logo.svg";
 
-const CircleAnimation = ({ isAnimationComplete }) => {
+const CircleAnimation = ({ onComplete }) => {
   const canvasRef = useRef(null);
+  const [isAnimationComplete, setIsAnimationComplete] = useState(false);
 
   useEffect(() => {
-    if (!isAnimationComplete) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
+    document.body.style.overflow = 'hidden';
+    
     return () => {
       document.body.style.overflow = 'unset';
     };
-  }, [isAnimationComplete]);
+  }, []);
 
   const drawTextOnArc = (canvas, text, radius, startAngle, endAngle, rotationOffset) => {
     const ctx = canvas.getContext('2d');
@@ -48,6 +46,8 @@ const CircleAnimation = ({ isAnimationComplete }) => {
       const ctx = canvas.getContext('2d');
       let rotationOffset = 0;
       let animationFrameId;
+      let startTime = Date.now();
+      const animationDuration = 3000; // 3 секунды анимации
 
       const textTop = 'Светя другим, сгораю сам'.split('').reverse().join('');
       const textBottom = 'Aliis intervendo consumer cam';
@@ -61,7 +61,21 @@ const CircleAnimation = ({ isAnimationComplete }) => {
       const bottomEndAngle = (23 / 12) * Math.PI;
 
       const animate = () => {
-        if (isAnimationComplete) return;
+        const currentTime = Date.now();
+        const elapsed = currentTime - startTime;
+
+        // Проверяем, прошло ли достаточно времени
+        if (elapsed >= animationDuration && !isAnimationComplete) {
+          setIsAnimationComplete(true);
+          
+          // Запускаем fade-out анимацию
+          setTimeout(() => {
+            document.body.style.overflow = 'unset';
+            if (onComplete) onComplete();
+          }, 500); // 500ms для fade-out анимации
+          
+          return;
+        }
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -74,14 +88,20 @@ const CircleAnimation = ({ isAnimationComplete }) => {
           rotationOffset -= Math.PI * 2;
         }
 
-        animationFrameId = requestAnimationFrame(animate);
+        if (!isAnimationComplete) {
+          animationFrameId = requestAnimationFrame(animate);
+        }
       };
 
       animate();
 
-      return () => cancelAnimationFrame(animationFrameId);
+      return () => {
+        if (animationFrameId) {
+          cancelAnimationFrame(animationFrameId);
+        }
+      };
     }
-  }, [isAnimationComplete]);
+  }, [isAnimationComplete, onComplete]);
 
   return (
     <div className={`animate-container ${isAnimationComplete ? 'fade-out' : ''}`}>
