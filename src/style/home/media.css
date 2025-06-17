@@ -58,12 +58,17 @@
   .burger-menu {
     display: block;
   }
+  
+
+  
   .burger-logo{
     margin: 0 auto;
     display: block;
-    width: 184px;
-    height: 184px;
+    width: 150px; /* Уменьшено с 184px */
+    height: 150px; /* Уменьшено с 184px */
+    margin-bottom: 20px; /* Добавлено */
   }
+  
   .nav-links {
     width: 100vw;
     height: 100vh;
@@ -76,16 +81,21 @@
     flex-direction: column;
     justify-content: flex-start;
     padding-top: 80px;
+    overflow-y: auto; /* Добавлено - разрешаем скролл внутри меню */
+    overflow-x: hidden; /* Добавлено */
   }
+  
   .nav-links span {
     display: block;
     text-align: center;
-    font-size: 28px;
+    font-size: 36px; /* Уменьшено с 28px */
     padding: 20px;
     border-bottom: 2px solid rgba(255, 255, 255, 0.2);
     margin-top: 28px;
-
+    margin-bottom: 20px; /* Добавлено */
+    color: white; /* Добавлено */
   }
+  
   .nav-links .link {
     padding: 20px 0px;
     font-size: 32px;
@@ -94,12 +104,12 @@
   .nav-links.active {
     left: 0;
     top: 0;
+    background: #BC0308; /* Добавлено - фон для меню */
   }
 
   .nav-links.active a {
     color: white;
     text-align: center;
-    
   }
 
   .dropdown-menu {
@@ -108,6 +118,9 @@
     min-width: 100%;
     z-index: 101;
     margin-top: 10px;
+    background: rgba(188, 3, 8, 0.95); /* Добавлено - фон для dropdown */
+    border-radius: 8px; /* Добавлено */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* Добавлено */
   }
   
   .dropdown-menu.show {
@@ -126,9 +139,17 @@
     font-size: 18px;
   }
   
-  
   .dropdown-menu a:hover {
     background: rgba(255,255,255,0.2);
+  }
+
+  .dropdown-loading,
+  .dropdown-empty {
+    color: white;
+    padding: 15px 16px;
+    font-size: 16px;
+    font-style: italic;
+    opacity: 0.8;
   }
 
   .burger-bar.open:nth-child(1) {
@@ -158,15 +179,18 @@
   
   .about-text p,
   .about-text li {
-    font-size: 16px;
+    font-size: 24px;
+    line-height: 1.6;
   }
-  
+  .stat-item {
+    padding: 20px;
+  }
   .stat-item h3 {
     font-size: 36px;
   }
   
   .logos-title {
-    font-size: 24px;
+    font-size: 20px;
     padding: 0 16px;
     margin-bottom: 32px;
   }
@@ -174,7 +198,10 @@
   .logos-section {
     padding: 32px 0;
   }
-  
+  .logo-box{
+    width: 130px;
+    height: 80px;
+  }
   .contact-info {
     display: none;
   }
@@ -240,7 +267,6 @@
   }
   
   .nav-links .link {
-    margin-top: 20px;
     font-size: 24px;
   }
   
@@ -251,10 +277,12 @@
   
   .about-text p,
   .about-text li {
-    font-size: 14px;
-    line-height: 1.4;
+    font-size: 18px;
+    line-height: 1.6;
   }
-  
+  .stat-item {
+    padding: 15px;
+  }
   .stat-item h3 {
     font-size: 30px;
   }
@@ -324,4 +352,46 @@
   .footer-requisites{
     display: none;
   }
+}
+
+@media (max-width: 376px) {
+  .hero {
+    height: 350px;
+  }
+
+  .hero-content {
+    padding: 0 16px;
+  }
+
+  .hero-content h1 {
+    font-size: 36px;
+  }
+
+  .hero-content p {
+    font-size: 18px;
+  }
+
+  .about h2 {
+    font-size: 28px;
+    margin-bottom: 20px;
+  }
+
+  .about-text p,
+  .about-text li {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  .stat-item {
+    padding: 5px;
+  }
+  .stat-item h3 {
+    font-size: 28px;
+  }
+
+  .logos-title {
+    font-size: 18px;
+    padding: 0 12px;
+    margin-bottom: 24px;
+  }
+  
 }

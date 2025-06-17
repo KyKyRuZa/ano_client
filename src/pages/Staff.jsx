@@ -5,6 +5,7 @@ import Footer from '../components/ux/Footer';
 import staffApi from '../api/staff';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
+import { StaffPageSkeleton } from '../components/Skeletons/SkeletonLoader';
 
 const StaffPage = () => {
   const [staff, setStaff] = useState([]);
@@ -29,9 +30,7 @@ const StaffPage = () => {
   if (loading) return (
     <>
       <Header/>
-      <div className="staff-page">
-        <h1>Загрузка...</h1>
-      </div>
+      <StaffPageSkeleton/>
       <Footer/>
     </>
   );

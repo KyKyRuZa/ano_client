@@ -10,6 +10,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { fetchMessages } from '../api/news';
 import '../style/home/news.css';
+import { NewsListSkeleton } from './Skeletons/SkeletonLoader';
 
 
 function MessageList() {
@@ -34,40 +35,7 @@ function MessageList() {
 
   const messagesPerPage = 5;
 
-  const SkeletonLoader = () => (
-  
-  <div className="skeleton-container">
-    <div className="skeleton-message-list">
-      {[...Array(messagesPerPage)].map((_, index) => (
-        <div key={index} className="skeleton-message-card">
-          <div className="skeleton-content">
-            {Math.random() > 0.3 ? (
-              <div className="skeleton-media"></div>
-            ) : Math.random() > 0.5 ? (
-              <div className="skeleton-audio"></div>
-            ) : (
-              <div className="skeleton-document"></div>
-            )}
-            
-            <div className="skeleton-text-container">
-              <div className="skeleton-text-lines">
-                <div className="skeleton-line skeleton-line-long"></div>
-                <div className="skeleton-line skeleton-line-medium"></div>
-                {Math.random() > 0.5 && (
-                  <div className="skeleton-line skeleton-line-short"></div>
-                )}
-              </div>
-            </div>
-            
-            <div className="skeleton-footer">
-              <div className="skeleton-date"></div>
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  </div>
-  );
+
 
   useEffect(() => {
     const getMessages = async () => {
@@ -403,7 +371,7 @@ function MessageList() {
   if (node) observerRef.current.observe(node);
 }, [loading, hasMore]);
 
-  if (loading) return <div className="loading"><SkeletonLoader /></div>;
+  if (loading) return <NewsListSkeleton/>
   if (error) return <div className="error">Ошибка: {error}</div>;
   if (messages.length === 0) return <div className="empty">Сообщений пока нет</div>;
 

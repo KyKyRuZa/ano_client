@@ -100,6 +100,8 @@
   transition: all 0.3s ease;
   display: block;
   padding: 10px 0;
+    position: relative; /* Добавлено для позиционирования dropdown */
+
 }
 .link:hover {
   color: #fffacd;
@@ -112,6 +114,10 @@
   min-width: 220px;
   z-index: 1000;
   padding: 10px 0;
+  background: rgba(188, 3, 8, 0.95); /* Добавлен фон */
+  border-radius: 8px; /* Добавлено скругление */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* Добавлена тень */
+  backdrop-filter: blur(10px); /* Добавлен blur эффект */
 }
 .dropdown-menu a {
   color: white;
@@ -120,6 +126,9 @@
   text-decoration: none;
   font-size: 16px;
   transition: background 0.3s ease;
+}
+.dropdown-menu.show {
+  display: block;
 }
 .dropdown-menu a:hover {
   background: rgba(255, 255, 255, 0.1);

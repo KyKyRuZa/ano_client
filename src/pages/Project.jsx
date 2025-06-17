@@ -1,21 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import projectApi from '../api/project';
-import '../style/home/programs.css';
+import '../style/home/detail-page.css';
 import Header from '../components/ux/Header'; 
 import Footer from '../components/ux/Footer'; 
+import DetailPageSkeleton from '../components/Skeletons/SkeletonLoader';
 
-const Programs = () => {
+const Project = () => {
     const { id } = useParams();
-    const [program, setProgram] = useState(null);
+    const [project, setProject] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     
-    const fetchProgramDetails = async () => {
+    const fetchprojectDetails = async () => {
             try {
                 setLoading(true);
-                const programData = await projectApi.getOne(id);
-                setProgram(programData);
+                const projectData = await projectApi.getOne(id);
+                setProject(projectData);
                 setError(null);
             } catch (err) {
                 console.error('Ошибка загрузки детальной информации о программе:', err);
@@ -25,40 +26,56 @@ const Programs = () => {
             }
         };
     useEffect(() => {
-        fetchProgramDetails();
+        fetchprojectDetails();
     }, [id]);
 
-    
-
     if (loading) {
-        return <div className="loading">Загрузка программы...</div>;
+        return (
+            <>
+                <Header />
+                <DetailPageSkeleton/>
+                <Footer />
+            </>
+        );
     }
 
     if (error) {
-        return <div className="error">{error}</div>;
+        return (
+            <>
+                <Header />
+                <div className="error">{error}</div>
+                <Footer />
+            </>
+        );
     }
 
-    if (!program) {
-        return <div className="not-found">Программа не найдена</div>;
+    if (!project) {
+        return (
+            <>
+                <Header />
+                <div className="not-found">Проект не найден</div>
+                <Footer />
+            </>
+        );
     }
 
     return (
          <div>
             <Header />
-            <div className="program-page">
-                <div className="program-container">
-                    <div className="program-content">
-                        <div className='program-header'>
-                            {program.media && (
-                            <div className="program-image">
-                                <img src={`https://anotsenimzhizn.ru/${program.media}`} alt={program.title} />
+            <div className="detail-page">
+                <div className="detail-container">
+                    <div className="detail-content">
+                        <div className='detail-header'>
+                            {project.media && (
+                            <div className="detail-image">
+                                <img src={`https://anotsenimzhizn.ru/${project.media}`} alt={project.title} />
                             </div>
                             )} 
-                            <h1 className="program-title">{program.title}</h1>
+                            <h1 className="detail-title">{project.title}</h1>
                         </div>
                         
-                        <div className="program-description">
-                            <p>{program.description}</p>
+                        <div className="detail-description">
+                            <p>{project.description}</p>
                         </div>
                     </div>
                 </div>
@@ -68,4 +85,4 @@ const Programs = () => {
     );
 };
 
-export default Programs;
+export default Project;

@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import logo from '../../style/assets/logo.svg';
 import projectsAPI from '../../api/project';
 import programsAPI from '../../api/program';
+import '../../style/home/header.css'
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -11,6 +12,8 @@ const Header = () => {
   const [programs, setPrograms] = useState([]);
   const [loading, setLoading] = useState(true);
   const { pathname } = useLocation();
+  const prevPathnameRef = useRef(null);
+  const isInitialMount = useRef(true);
   
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -39,20 +42,30 @@ const Header = () => {
     fetchData();
   }, []);
 
+  
+  // Отдельный useEffect для управления скроллом при открытии/закрытии бургер-меню
   useEffect(() => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
     if (isOpen) {
+      // Блокируем скролл страницы
       document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
     } else {
+      // Разблокируем скролл страницы
       document.body.style.overflow = 'unset';
+      document.body.style.position = 'unset';
+      document.body.style.width = 'unset';
     }
+
+    // Cleanup function
     return () => {
       document.body.style.overflow = 'unset';
+      document.body.style.position = 'unset';
+      document.body.style.width = 'unset';
     };
-  }, [isOpen, pathname]);
+  }, [isOpen]);
+
+
 
   return (
     <header className="header">

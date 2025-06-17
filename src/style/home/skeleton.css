@@ -1,0 +1,385 @@
+/* Базовые стили для скелетонов */
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: 4px;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Универсальные размеры скелетонов */
+.skeleton-text {
+  height: 16px;
+  margin-bottom: 8px;
+}
+
+.skeleton-text-sm {
+  height: 14px;
+}
+
+.skeleton-text-lg {
+  height: 18px;
+}
+
+.skeleton-text-xl {
+  height: 24px;
+}
+
+.skeleton-title {
+  height: 32px;
+  margin-bottom: 16px;
+}
+
+.skeleton-title-lg {
+  height: 42px;
+}
+
+.skeleton-title-sm {
+  height: 24px;
+}
+
+/* Ширины */
+.skeleton-w-full {
+  width: 100%;
+}
+
+.skeleton-w-3-4 {
+  width: 75%;
+}
+
+.skeleton-w-1-2 {
+  width: 50%;
+}
+
+.skeleton-w-1-4 {
+  width: 25%;
+}
+
+.skeleton-w-120 {
+  width: 120px;
+}
+
+.skeleton-w-100 {
+  width: 100px;
+}
+
+.skeleton-w-80 {
+  width: 80px;
+}
+
+/* Высоты */
+.skeleton-h-120 {
+  height: 120px;
+}
+
+.skeleton-h-100 {
+  height: 100px;
+}
+
+.skeleton-h-80 {
+  height: 80px;
+}
+
+.skeleton-h-60 {
+  height: 60px;
+}
+
+.skeleton-h-40 {
+  height: 40px;
+}
+
+.skeleton-h-300 {
+  height: 300px;
+}
+
+.skeleton-h-220 {
+  height: 220px;
+}
+
+.skeleton-h-180 {
+  height: 180px;
+}
+
+/* Специальные формы */
+.skeleton-circle {
+  border-radius: 50%;
+}
+
+.skeleton-rounded {
+  border-radius: 8px;
+}
+
+.skeleton-rounded-lg {
+  border-radius: 12px;
+}
+
+/* Отступы */
+.skeleton-mb-2 {
+  margin-bottom: 8px;
+}
+
+.skeleton-mb-3 {
+  margin-bottom: 12px;
+}
+
+.skeleton-mb-4 {
+  margin-bottom: 16px;
+}
+
+.skeleton-mb-6 {
+  margin-bottom: 24px;
+}
+
+/* Контейнеры для скелетонов */
+.skeleton-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.skeleton-row {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.skeleton-grid {
+  display: grid;
+  gap: 16px;
+}
+
+/* Специфичные компоненты */
+
+/* Detail Page Skeleton */
+.skeleton-detail-image {
+  width: 120px;
+  height: 120px;
+  border-radius: 8px;
+}
+
+.skeleton-detail-title {
+  height: 42px;
+  width: 60%;
+  margin: 0;
+}
+
+/* News Card Skeleton */
+.skeleton-news-card {
+  position: relative;
+  background-color: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  height: auto;
+  margin-bottom: 30px;
+  break-inside: avoid;
+  display: inline-block;
+}
+
+.skeleton-news-content {
+  display: flex;
+  flex-direction: column;
+  border-radius: 12px;
+}
+
+.skeleton-news-media {
+  width: 100%;
+  height: 300px;
+  border-radius: 8px 8px 0 0;
+}
+
+.skeleton-news-text-container {
+  padding: 16px;
+}
+
+.skeleton-news-text-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+.skeleton-news-footer {
+  position: relative;
+  margin-top: auto;
+  padding: 0 15px 15px 15px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.skeleton-news-date {
+  width: 120px;
+  height: 14px;
+}
+
+/* News List Layout */
+.skeleton-news-list {
+  columns: 2;
+  column-gap: 30px;
+  padding: 0;
+}
+
+.skeleton-news-list-container {
+  margin: 0 auto;
+  padding: 0 40px;
+  background-color: #fff;
+  font-family: 'Jost', Arial, sans-serif;
+}
+
+/* Staff Skeleton - точно как в оригинале */
+.skeleton-staff-page {
+  max-width: 1200px;
+  margin: 120px auto;
+  padding: 20px;
+}
+
+.skeleton-staff-title {
+  text-align: center;
+  margin-bottom: 20px;
+  width: 300px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.skeleton-staff-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.skeleton-staff-card {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  text-align: center;
+}
+
+.skeleton-staff-card-avatar {
+  width: 100%;
+  height: 300px;
+  overflow: hidden;
+}
+
+.skeleton-staff-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+}
+
+.skeleton-staff-card-content {
+  padding: 15px;
+}
+
+.skeleton-staff-name {
+  height: 20px;
+  margin: 0 0 10px;
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.skeleton-staff-position {
+  height: 16px;
+  margin-bottom: 5px;
+  width: 60%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.skeleton-staff-department {
+  height: 14px;
+  margin-bottom: 10px;
+  width: 70%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.skeleton-staff-description {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.skeleton-staff-description .skeleton-text {
+  height: 14px;
+  margin-bottom: 4px;
+}
+
+/* Media Queries */
+@media (max-width: 1024px) {
+  .skeleton-detail-title {
+    height: 36px;
+  }
+  
+  .skeleton-news-media {
+    height: 220px;
+  }
+}
+
+@media (max-width: 768px) {
+  .skeleton-detail-image {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .skeleton-detail-title {
+    height: 30px;
+    width: 80%;
+  }
+  
+  .skeleton-news-list {
+    columns: 1;
+  }
+  
+  .skeleton-news-list-container {
+    padding: 0 16px;
+  }
+  
+  .skeleton-news-media {
+    height: 180px;
+  }
+  
+  .skeleton-news-text-container {
+    padding: 12px;
+  }
+  
+  .skeleton-news-footer {
+    padding: 0 10px 10px 10px;
+  }
+  
+  .skeleton-news-date {
+    width: 100px;
+    height: 12px;
+  }
+
+  .skeleton-staff-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+}
+
+@media (max-width: 426px) {
+  .skeleton-detail-image {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .skeleton-detail-title {
+    height: 24px;
+    width: 90%;
+  }
+
+  .skeleton-staff-title {
+    width: 250px;
+  }
+}

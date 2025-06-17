@@ -46,5 +46,14 @@
   },
   "devDependencies": {
     "react-snap": "^1.23.0"
-  }
+  },
+  "reactSnap": {
+  "source": "build",
+  "include": [
+    "/",
+    "/projects",
+    "/programs",
+    "/staff"
+  ]
+}
 }
