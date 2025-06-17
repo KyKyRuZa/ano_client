@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Home from './pages/Home';
 import Project from './pages/Project';
 import Programs from './pages/Programs';
@@ -11,9 +11,19 @@ import UserAgreement from './pages/UserAgreement';
 import Disclaimer from './components/Disclaimer';
 import CircleAnimation from './components/CircleAnimation';
 
-function App() {
+const AppContent = () => {
   const [isAnimationComplete, setIsAnimationComplete] = useState(false);
   const [isDisclaimerConfirmed, setIsDisclaimerConfirmed] = useState(false);
+  const location = useLocation();
+
+  const isAdminRoute = location.pathname.startsWith('/admin');
+
+  useEffect(() => {
+    if (isAdminRoute) {
+      setIsDisclaimerConfirmed(true);
+      setIsAnimationComplete(true);
+    }
+  }, [isAdminRoute]);
 
   const handleAnimationComplete = () => {
     setIsAnimationComplete(true);
@@ -24,24 +34,15 @@ function App() {
   };
 
   return (
-    <Router>
+    <>
       <ScrollToTop/>
-      
-      {/* Показываем дисклеймер первым */}
-      {!isDisclaimerConfirmed && (
+      {!isAdminRoute && !isDisclaimerConfirmed && (
         <Disclaimer onConfirm={handleDisclaimerConfirm} />
       )}
-      
-      {/* Показываем анимацию после подтверждения дисклеймера */}
-      {isDisclaimerConfirmed && !isAnimationComplete && (
-        <CircleAnimation 
-          isAnimationComplete={isAnimationComplete}
-          onComplete={handleAnimationComplete}
-        />
+      {!isAdminRoute && isDisclaimerConfirmed && !isAnimationComplete && (
+        <CircleAnimation onComplete={handleAnimationComplete} />
       )}
-      
-      {/* Основной контент показываем только после всех проверок */}
-      {isDisclaimerConfirmed && isAnimationComplete && (
+      {(isAdminRoute || (isDisclaimerConfirmed && isAnimationComplete)) && (
         <div className="app">
           <div className="content">
             <Routes>
@@ -57,6 +58,14 @@ function App() {
           </div>
         </div>
       )}
+    </>
+  );
+};
+
+function App() {
+  return (
+    <Router>
+      <AppContent />
     </Router>
   );
 }
