@@ -66,6 +66,10 @@
   background-color: black;
   transition: all 0.3s ease;
 }
+.burger-menu:hover{
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+
+}
 .burger-bar.open .burger-bar:nth-child(1) {
   transform: translateY(8px) rotate(45deg);
 }

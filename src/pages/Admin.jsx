@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, Routes, Route } from 'react-router-dom';
 import logo from '../style/assets/logo.svg';
 import '../style/admin/admin.css';
-import '../style/admin/media.css';
+import '../style/admin/adminmedia.css'
 import authApi from '../api/auth';
 
 import StaffPage from './AdminPages/StaffPage';
@@ -26,10 +26,11 @@ const NavItem = ({ text, path, onClick }) => {
 };
 
 const Navbar = ({ isOpen, toggleMenu }) => {
-  const navItems = [
-    { text: 'Персонал', path: '/admin/staff' },
-    { text: 'Программы', path: '/admin/programs' },
+  const navItems = [ 
     { text: 'Проекты', path: '/admin/projects' },
+    { text: 'Программы', path: '/admin/programs' },
+    { text: 'Персонал', path: '/admin/staff' },
+   
   ];
 
   return (

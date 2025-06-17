@@ -45,13 +45,11 @@
   justify-content: center;
   align-items: center;
   gap: 5px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
 }
 
 .mobile-menu-btn:hover {
-  background: #a00307;
-  transform: scale(1.05);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
 .burger-bar-admin {

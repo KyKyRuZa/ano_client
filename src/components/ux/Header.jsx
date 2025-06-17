@@ -124,7 +124,7 @@ const Header = () => {
               )}
             </div>
           </Link>
-          <Link className='link' to="/personal/">Персоналии</Link>
+          <Link className='link' to="/personal/">Персонал</Link>
         </ul>
         
         <Link to="/"><img src={logo} alt="Banner" className="logo" /></Link>

@@ -90,6 +90,9 @@
 .footer-requisites {
   display: flex;
   flex-direction: column;
+  padding-bottom: 14px;
+  margin-bottom: 14px;
+  border-bottom: 3px solid rgba(255, 255, 255, 1);
 }
 
 .footer-requisites p {
