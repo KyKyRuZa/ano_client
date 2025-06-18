@@ -25,7 +25,7 @@ const Footer = () => {
             <a href="https://www.youtube.com/@tsenim_zhizn" target="_blank" rel="noopener noreferrer">
               <FontAwesomeIcon icon={faYoutube} />
             </a>
-            <a href="/">
+            <a href="https://rutube.ru/channel/60739870/">
                 <img src={rutub} alt="rutube" className="rutube" />
             </a>
           </div>
