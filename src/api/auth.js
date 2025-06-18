@@ -52,12 +52,11 @@ axiosInstance.interceptors.response.use(
 );
 
 export const authApi = {
-    async register(login, password, role = 'admin') {
+    async register(login, password) {
         try {
             const response = await axiosInstance.post('/register', {
                 login,
-                password,
-                role
+                password
             });
             
             if (response.data.token) {
@@ -81,7 +80,7 @@ export const authApi = {
                 login,
                 password
             });
-                        
+            
             if (response.data.token) {
                 localStorage.setItem('token', response.data.token);
                 localStorage.setItem('refreshToken', response.data.refreshToken || '');
@@ -93,29 +92,9 @@ export const authApi = {
             return response.data;
         } catch (error) {
             console.error('Login Error:', error.response?.data || error.message);
-
-            if (error.response?.status === 401) {
-                throw new Error('Неверный логин или пароль');
-            } else if (error.response?.status === 500) {
-                throw new Error('Ошибка сервера. Попробуйте позже');
-            } else if (!navigator.onLine) {
-                throw new Error('Нет подключения к интернету');
-            }
-            
-            throw error.response?.data || new Error('Ошибка входа в систему');
+            throw error.response?.data || new Error('Login failed');
         }
     },
-
-    async getProfile() {
-        try {
-            const response = await axiosInstance.get('/profile');
-            return response.data;
-        } catch (error) {
-            console.error('Profile Fetch Error:', error.response?.data || error.message);
-            throw error.response?.data || new Error('Failed to fetch profile');
-        }
-    },
-
     async refreshToken() {
         try {
             const refreshToken = localStorage.getItem('refreshToken');
