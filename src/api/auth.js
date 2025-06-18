@@ -12,9 +12,12 @@ const axiosInstance = axios.create({
 const updateAuthHeaders = (token) => {
     if (token) {
         axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    } else {
+        delete axiosInstance.defaults.headers.common['Authorization'];
     }
 };
 
+// Интерцептор для автоматического обновления токенов
 axiosInstance.interceptors.response.use(
     (response) => response,
     async (error) => {
@@ -27,23 +30,30 @@ axiosInstance.interceptors.response.use(
                 const refreshToken = localStorage.getItem('refreshToken');
                 
                 if (!refreshToken) {
-                    return authApi.logout();
+                    authApi.logout();
+                    return Promise.reject(error);
                 }
 
-                const response = await axiosInstance.post('/refresh-token', { refreshToken });
+                const response = await axiosInstance.post('/refresh-token', { 
+                    refreshToken 
+                });
                 
-                const { token, refreshToken: newRefreshToken } = response.data;
+                if (response.data.success) {
+                    const { token, refreshToken: newRefreshToken } = response.data;
 
-                localStorage.setItem('token', token);
-                localStorage.setItem('refreshToken', newRefreshToken);
+                    localStorage.setItem('token', token);
+                    localStorage.setItem('refreshToken', newRefreshToken);
 
-                updateAuthHeaders(token);
+                    updateAuthHeaders(token);
 
-                originalRequest.headers['Authorization'] = `Bearer ${token}`;
+                    originalRequest.headers['Authorization'] = `Bearer ${token}`;
 
-                return axiosInstance(originalRequest);
+                    return axiosInstance(originalRequest);
+                }
             } catch (refreshError) {
-                return authApi.logout();
+                console.error('Ошибка обновления токена:', refreshError);
+                authApi.logout();
+                return Promise.reject(refreshError);
             }
         }
 
@@ -52,28 +62,6 @@ axiosInstance.interceptors.response.use(
 );
 
 export const authApi = {
-    async register(login, password) {
-        try {
-            const response = await axiosInstance.post('/register', {
-                login,
-                password
-            });
-            
-            if (response.data.token) {
-                localStorage.setItem('token', response.data.token);
-                localStorage.setItem('refreshToken', response.data.refreshToken || '');
-                localStorage.setItem('user', JSON.stringify(response.data.admin));
-                
-                updateAuthHeaders(response.data.token);
-            }
-            
-            return response.data;
-        } catch (error) {
-            console.error('Registration Error:', error.response?.data || error.message);
-            throw error.response?.data || new Error('Registration failed');
-        }
-    },
-
     async login(login, password) {
         try {
             const response = await axiosInstance.post('/login', {
@@ -81,61 +69,163 @@ export const authApi = {
                 password
             });
             
-            if (response.data.token) {
-                localStorage.setItem('token', response.data.token);
-                localStorage.setItem('refreshToken', response.data.refreshToken || '');
-                localStorage.setItem('user', JSON.stringify(response.data.admin));
+            if (response.data.success) {
+                const { token, refreshToken, admin } = response.data;
                 
-                updateAuthHeaders(response.data.token);
+                // Сохраняем данные в localStorage
+                localStorage.setItem('token', token);
+                localStorage.setItem('refreshToken', refreshToken);
+                localStorage.setItem('user', JSON.stringify(admin));
+                localStorage.setItem('isAdmin', 'true');
+                
+                // Обновляем заголовки авторизации
+                updateAuthHeaders(token);
+                
+                return response.data;
+            } else {
+                throw new Error(response.data.error || 'Ошибка авторизации');
             }
-            
-            return response.data;
         } catch (error) {
-            console.error('Login Error:', error.response?.data || error.message);
-            throw error.response?.data || new Error('Login failed');
+            console.error('Login Error:', error);
+            
+            // Обрабатываем различные типы ошибок
+            if (error.response?.data) {
+                throw error.response.data;
+            } else if (error.message) {
+                throw { error: error.message };
+            } else {
+                throw { error: 'Ошибка подключения к серверу' };
+            }
         }
     },
+
+    async register(login, password) {
+        try {
+            const response = await axiosInstance.post('/register', {
+                login,
+                password
+            });
+            
+            if (response.data.success) {
+                const { token, refreshToken, admin } = response.data;
+                
+                // Сохраняем данные в localStorage
+                localStorage.setItem('token', token);
+                localStorage.setItem('refreshToken', refreshToken);
+                localStorage.setItem('user', JSON.stringify(admin));
+                localStorage.setItem('isAdmin', 'true');
+                
+                // Обновляем заголовки авторизации
+                updateAuthHeaders(token);
+                
+                return response.data;
+            } else {
+                throw new Error(response.data.error || 'Ошибка регистрации');
+            }
+        } catch (error) {
+            console.error('Registration Error:', error);
+            
+            // Обрабатываем различные типы ошибок
+            if (error.response?.data) {
+                throw error.response.data;
+            } else if (error.message) {
+                throw { error: error.message };
+            } else {
+                throw { error: 'Ошибка подключения к серверу' };
+            }
+        }
+    },
+
     async refreshToken() {
         try {
             const refreshToken = localStorage.getItem('refreshToken');
             
             if (!refreshToken) {
-                throw new Error('No refresh token available');
+                throw new Error('Refresh token не найден');
             }
 
-            const response = await axiosInstance.post('/refresh-token', { refreshToken });
+            const response = await axiosInstance.post('/refresh-token', { 
+                refreshToken 
+            });
             
-            if (response.data.token) {
-                localStorage.setItem('token', response.data.token);
-                localStorage.setItem('refreshToken', response.data.refreshToken || '');
+            if (response.data.success) {
+                const { token, refreshToken: newRefreshToken } = response.data;
                 
-                updateAuthHeaders(response.data.token);
+                // Обновляем токены в localStorage
+                localStorage.setItem('token', token);
+                localStorage.setItem('refreshToken', newRefreshToken);
+                
+                // Обновляем заголовки авторизации
+                updateAuthHeaders(token);
+                
+                return response.data;
+            } else {
+                throw new Error(response.data.error || 'Ошибка обновления токена');
             }
-
-            return response.data;
         } catch (error) {
-            console.error('Token Refresh Error:', error.response?.data || error.message);
-            return this.logout();
+            console.error('Token Refresh Error:', error);
+            
+            // При ошибке обновления токена - выходим из системы
+            this.logout();
+            
+            if (error.response?.data) {
+                throw error.response.data;
+            } else if (error.message) {
+                throw { error: error.message };
+            } else {
+                throw { error: 'Ошибка обновления токена' };
+            }
         }
     },
 
     logout() {
+        // Очищаем все данные из localStorage
         localStorage.removeItem('token');
         localStorage.removeItem('refreshToken');
         localStorage.removeItem('user');
         localStorage.removeItem('isAdmin');
         
-        delete axiosInstance.defaults.headers.common['Authorization'];
+        // Удаляем заголовки авторизации
+        updateAuthHeaders(null);
+        
+        console.log('Пользователь вышел из системы');
     },
 
     isAuthenticated() {
-        return !!localStorage.getItem('token');
+        const token = localStorage.getItem('token');
+        const isAdmin = localStorage.getItem('isAdmin');
+        return !!(token && isAdmin === 'true');
     },
 
     getCurrentUser() {
-        const userStr = localStorage.getItem('user');
-        return userStr ? JSON.parse(userStr) : null;
+        try {
+            const userStr = localStorage.getItem('user');
+            return userStr ? JSON.parse(userStr) : null;
+        } catch (error) {
+            console.error('Ошибка парсинга данных пользователя:', error);
+            return null;
+        }
+    },
+
+    getToken() {
+        return localStorage.getItem('token');
+    },
+
+    getRefreshToken() {
+        return localStorage.getItem('refreshToken');
     }
 };
+
+// Инициализация при загрузке модуля
+const initializeAuth = () => {
+    const token = localStorage.getItem('token');
+    if (token) {
+        updateAuthHeaders(token);
+        console.log('Токен авторизации восстановлен из localStorage');
+    }
+};
+
+// Вызываем инициализацию
+initializeAuth();
 
 export default authApi;

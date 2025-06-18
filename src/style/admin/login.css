@@ -197,8 +197,6 @@
   border-radius: 4px;
 }
 
-
-
 .password-toggle-btn:active {
   transform: scale(0.95);
 }
