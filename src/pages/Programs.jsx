@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import programApi from '../api/program';
 import '../style/home/detail-page.css';
@@ -12,11 +12,7 @@ const Programs = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    useEffect(() => {
-        fetchProgramDetails();
-    }, [id]);
-
-    const fetchProgramDetails = async () => {
+    const fetchProgramDetails = useCallback(async () => {
         try {
             setLoading(true);
             const programData = await programApi.getOne(id);
@@ -28,8 +24,13 @@ const Programs = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [id]);
 
+    useEffect(() => {
+        fetchProgramDetails();
+    }, [fetchProgramDetails]);
+
+    // остальной код остается без изменений...
     if (loading) {
         return (
             <>

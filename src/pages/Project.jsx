@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import projectApi from '../api/project';
 import '../style/home/detail-page.css';
@@ -12,22 +12,23 @@ const Project = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     
-    const fetchprojectDetails = async () => {
-            try {
-                setLoading(true);
-                const projectData = await projectApi.getOne(id);
-                setProject(projectData);
-                setError(null);
-            } catch (err) {
-                console.error('Ошибка загрузки детальной информации о программе:', err);
-                setError('Не удалось загрузить информацию о программе');
-            } finally {
-                setLoading(false);
-            }
-        };
-    useEffect(() => {
-        fetchprojectDetails();
+    const fetchProjectDetails = useCallback(async () => {
+        try {
+            setLoading(true);
+            const projectData = await projectApi.getOne(id);
+            setProject(projectData);
+            setError(null);
+        } catch (err) {
+            console.error('Ошибка загрузки детальной информации о проекте:', err);
+            setError('Не удалось загрузить информацию о проекте');
+        } finally {
+            setLoading(false);
+        }
     }, [id]);
+
+    useEffect(() => {
+        fetchProjectDetails();
+    }, [fetchProjectDetails]);
 
     if (loading) {
         return (
