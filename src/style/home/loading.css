@@ -69,6 +69,52 @@ html {
   visibility: visible;
 }
 
+/* Кнопка пропуска анимации */
+.skip-animation-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.7);
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 300;
+  z-index: 1000;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.skip-animation-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 1);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.skip-animation-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+}
+
+/* Fallback при ошибке */
+.error-fallback {
+  background-color: #BC0308;
+}
+
+.error-message {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+  font-weight: 300;
+  text-align: center;
+}
+
 /* 320px - Маленькие смартфоны */
 @media (max-width: 320px) {
   .animate-container {
@@ -78,6 +124,13 @@ html {
   .canvas-container {
     width: 240px;
     height: 240px;
+  }
+
+  .skip-animation-btn {
+    top: 15px;
+    left: 15px;
+    padding: 4px 8px;
+    font-size: 10px;
   }
 }
 
@@ -90,6 +143,13 @@ html {
   .canvas-container {
     width: 295px;
     height: 295px;
+  }
+
+  .skip-animation-btn {
+    top: 15px;
+    left: 15px;
+    padding: 5px 10px;
+    font-size: 10px;
   }
 }
 
@@ -150,5 +210,12 @@ html {
   .canvas-container {
     width: 200px;
     height: 200px;
+  }
+
+  .skip-animation-btn {
+    top: 10px;
+    left: 10px;
+    padding: 4px 8px;
+    font-size: 9px;
   }
 }

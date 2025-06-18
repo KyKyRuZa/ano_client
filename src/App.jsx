@@ -19,18 +19,45 @@ const AppContent = () => {
   const isAdminRoute = location.pathname.startsWith('/admin');
 
   useEffect(() => {
+    // Используем sessionStorage вместо localStorage для сохранения только на сессию
+    const storedAnimationState = sessionStorage.getItem('animationComplete');
+    const storedDisclaimerState = sessionStorage.getItem('disclaimerConfirmed');
+
     if (isAdminRoute) {
       setIsDisclaimerConfirmed(true);
       setIsAnimationComplete(true);
+      sessionStorage.setItem('animationComplete', 'true');
+      sessionStorage.setItem('disclaimerConfirmed', 'true');
+    } else {
+      // Восстанавливаем состояние из sessionStorage
+      const savedAnimationComplete = storedAnimationState === 'true';
+      const savedDisclaimerConfirmed = storedDisclaimerState === 'true';
+
+      setIsDisclaimerConfirmed(savedDisclaimerConfirmed);
+      setIsAnimationComplete(savedAnimationComplete);
+
+      // Добавляем защиту от застревания с таймаутом только если анимация не была завершена
+      if (!savedAnimationComplete) {
+        const animationTimeout = setTimeout(() => {
+          if (!isAnimationComplete) {
+            setIsAnimationComplete(true);
+            sessionStorage.setItem('animationComplete', 'true');
+          }
+        }, 10000); // 10 секунд максимум на анимацию
+
+        return () => clearTimeout(animationTimeout);
+      }
     }
-  }, [isAdminRoute]);
+  }, [isAdminRoute, location]);
 
   const handleAnimationComplete = () => {
     setIsAnimationComplete(true);
+    sessionStorage.setItem('animationComplete', 'true');
   };
 
   const handleDisclaimerConfirm = () => {
     setIsDisclaimerConfirmed(true);
+    sessionStorage.setItem('disclaimerConfirmed', 'true');
   };
 
   return (
@@ -40,7 +67,10 @@ const AppContent = () => {
         <Disclaimer onConfirm={handleDisclaimerConfirm} />
       )}
       {!isAdminRoute && isDisclaimerConfirmed && !isAnimationComplete && (
-        <CircleAnimation onComplete={handleAnimationComplete} />
+        <CircleAnimation 
+          onComplete={handleAnimationComplete} 
+          timeout={10000}
+        />
       )}
       {(isAdminRoute || (isDisclaimerConfirmed && isAnimationComplete)) && (
         <div className="app">
