@@ -23,8 +23,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "postbuild": "react-snap"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [
@@ -43,28 +42,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "reactSnap": {
-    "source": "build",
-    "include": [
-      "/",
-      "/projects",
-      "/programs",
-      "/staff"
-    ],
-    "puppeteerArgs": [
-      "--no-sandbox",
-      "--disable-setuid-sandbox",
-      "--disable-dev-shm-usage",
-      "--disable-accelerated-2d-canvas",
-      "--no-first-run",
-      "--no-zygote",
-      "--disable-gpu"
-    ],
-    "minifyHtml": false,
-    "fixWebpackChunksIssue": "InjectBundlesPlugin",
-    "skipThirdPartyRequests": true,
-    "cacheAjaxRequests": false,
-    "preloadImages": false
   }
 }
