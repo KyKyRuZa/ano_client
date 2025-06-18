@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faPlay, 
@@ -16,7 +16,6 @@ import { NewsListSkeleton } from './Skeletons/SkeletonLoader';
 function MessageList() {
   const [messages, setMessages] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [visibleMessages, setVisibleMessages] = useState([]); 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeAudio, setActiveAudio] = useState(null);
@@ -25,17 +24,18 @@ function MessageList() {
   const [audioProgress, setAudioProgress] = useState({});
   const [audioDurations, setAudioDurations] = useState({});
   
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-  
   const audioRefs = useRef({});
-  const observerRef = useRef();
   
   const [mediaGroupCurrentIndex, setMediaGroupCurrentIndex] = useState({});
 
   const messagesPerPage = 5;
 
+  const totalPages = useMemo(() => Math.ceil(messages.length / messagesPerPage), [messages.length]);
 
+  const getCurrentPageMessages = useMemo(() => {
+    const startIndex = (currentPage - 1) * messagesPerPage;
+    return messages.slice(startIndex, startIndex + messagesPerPage);
+  }, [messages, currentPage]);
 
   useEffect(() => {
     const getMessages = async () => {
@@ -53,35 +53,17 @@ function MessageList() {
     getMessages();
   }, []);
 
-  useEffect(() => {
-    if (page > 1) {
-      const startIndex = (page - 1) * messagesPerPage;
-      const endIndex = startIndex + messagesPerPage;
-      const nextMessages = messages.slice(startIndex, endIndex);
-      
-      setVisibleMessages(prev => [...prev, ...nextMessages]);
-      setHasMore(endIndex < messages.length);
-    }
-  }, [page, messages]);
-
-  const totalPages = Math.ceil(messages.length / messagesPerPage);
-
-  const getCurrentPageMessages = () => {
-    const startIndex = (currentPage - 1) * messagesPerPage;
-    return messages.slice(startIndex, startIndex + messagesPerPage);
-  };
-
-  const handleNextPage = () => {
+  const handleNextPage = useCallback(() => {
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
     }
-  };
+  }, [currentPage, totalPages]);
 
-  const handlePrevPage = () => {
+  const handlePrevPage = useCallback(() => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
     }
-  };
+  }, [currentPage]);
 
   const renderPagination = () => (
     <div className="pagination">
@@ -108,7 +90,6 @@ function MessageList() {
       </button>
     </div>
   );
-
 
   const formatTime = (seconds) => {
     if (!seconds || isNaN(seconds)) return '0:00';
@@ -339,53 +320,38 @@ function MessageList() {
         </div>
       );
     } else if (message.media_type && message.media_url) {
-      // Рендер одиночного медиа
       return renderSingleMedia(message.media_type, message.media_url, message.id);
     }
     return null;
   };
 
-
-  const handleMediaGroupNext = (messageId, totalItems) => {
+  const handleMediaGroupNext = useCallback((messageId, totalItems) => {
     setMediaGroupCurrentIndex(prev => ({
       ...prev,
       [messageId]: ((prev[messageId] || 0) + 1) % totalItems
     }));
-  };
+  }, []);
 
-  const handleMediaGroupPrev = (messageId, totalItems) => {
+  const handleMediaGroupPrev = useCallback((messageId, totalItems) => {
     setMediaGroupCurrentIndex(prev => ({
       ...prev,
       [messageId]: ((prev[messageId] || 0) - 1 + totalItems) % totalItems
     }));
-  };
-
-  const lastMessageElementRef = useCallback(node => {
-  if (loading) return;
-  if (observerRef.current) observerRef.current.disconnect();
-  observerRef.current = new IntersectionObserver(entries => {
-    if (entries[0].isIntersecting && hasMore) {
-      setPage(prevPage => prevPage + 1);
-    }
-  });
-  if (node) observerRef.current.observe(node);
-}, [loading, hasMore]);
+  }, []);
 
   if (loading) return <NewsListSkeleton/>
   if (error) return <div className="error">Ошибка: {error}</div>;
   if (messages.length === 0) return <div className="empty">Сообщений пока нет</div>;
 
-
   return (
-  <div className="news-container">
+    <div className="news-container">
       <h2>Новости и объявления</h2>
       <div className="message-list-container">
         <div className="message-list">
-          {getCurrentPageMessages().map((message, index) => (
+          {getCurrentPageMessages.map((message) => (
             <div 
               key={message.id} 
               className="message-card"
-              ref={index === getCurrentPageMessages().length - 1 ? lastMessageElementRef : null}
             >
               <div className="message-content">
                 {renderMediaContent(message)}
@@ -393,7 +359,7 @@ function MessageList() {
                 
                 <div className="message-footer">
                   <span className="message-date">
-                     {new Date(message.timestamp + 'Z').toLocaleString('ru-RU', {
+                     {new Date(message.timestamp).toLocaleString('ru-RU', {
                       day: '2-digit',
                       month: '2-digit', 
                       year: 'numeric',
