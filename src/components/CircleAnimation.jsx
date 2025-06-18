@@ -116,9 +116,8 @@ const CircleAnimation = ({ onComplete, timeout = 10000 }) => {
           const currentTime = Date.now();
           const elapsed = currentTime - startTimeRef.current;
 
-          // Проверяем завершение анимации
           if (elapsed >= animationDuration) {
-            rotationOffset = Math.PI * 2; // принудительно доводим до конца
+            rotationOffset = Math.PI * 2; 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawTextOnArc(canvas, textTop, radius, topStartAngle, topEndAngle, rotationOffset);
             drawTextOnArc(canvas, textBottom, radius, bottomStartAngle, bottomEndAngle, rotationOffset);
@@ -126,18 +125,14 @@ const CircleAnimation = ({ onComplete, timeout = 10000 }) => {
             return;
           }
 
-          // Вычисляем текущее вращение (от 0 до 2π)
           const progress = elapsed / animationDuration;
           rotationOffset = progress * Math.PI * 2;
 
-          // Очищаем canvas
           ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-          // Отрисовываем текст
           drawTextOnArc(canvas, textTop, radius, topStartAngle, topEndAngle, rotationOffset);
           drawTextOnArc(canvas, textBottom, radius, bottomStartAngle, bottomEndAngle, rotationOffset);
 
-          // Продолжаем анимацию
           if (!isAnimationComplete) {
             animationFrameRef.current = requestAnimationFrame(animate);
           }
@@ -148,7 +143,6 @@ const CircleAnimation = ({ onComplete, timeout = 10000 }) => {
 
       let rotationOffset = 0;
 
-      // Запускаем анимацию с небольшой задержкой для инициализации
       setTimeout(() => {
         if (!isAnimationComplete) {
           animate();
