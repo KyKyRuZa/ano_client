@@ -6,7 +6,8 @@ const axiosInstance = axios.create({
     baseURL: API_URL,
     headers: {
         'Content-Type': 'application/json'
-    }
+    },
+    timeout: 10000 // 10 секунд таймаут
 });
 
 const updateAuthHeaders = (token) => {
@@ -64,10 +65,14 @@ axiosInstance.interceptors.response.use(
 export const authApi = {
     async login(login, password) {
         try {
+            console.log('Отправка запроса на авторизацию...');
+            
             const response = await axiosInstance.post('/login', {
                 login,
                 password
             });
+            
+            console.log('Ответ сервера:', response.data);
             
             if (response.data.success) {
                 const { token, refreshToken, admin } = response.data;
@@ -86,10 +91,17 @@ export const authApi = {
                 throw new Error(response.data.error || 'Ошибка авторизации');
             }
         } catch (error) {
-            console.error('Login Error:', error);
+            console.error('Login Error Details:', {
+                message: error.message,
+                response: error.response?.data,
+                status: error.response?.status,
+                statusText: error.response?.statusText
+            });
             
             // Обрабатываем различные типы ошибок
-            if (error.response?.data) {
+            if (error.response?.data?.error) {
+                throw { error: error.response.data.error };
+            } else if (error.response?.data) {
                 throw error.response.data;
             } else if (error.message) {
                 throw { error: error.message };
@@ -126,7 +138,9 @@ export const authApi = {
             console.error('Registration Error:', error);
             
             // Обрабатываем различные типы ошибок
-            if (error.response?.data) {
+            if (error.response?.data?.error) {
+                throw { error: error.response.data.error };
+            } else if (error.response?.data) {
                 throw error.response.data;
             } else if (error.message) {
                 throw { error: error.message };
@@ -168,7 +182,9 @@ export const authApi = {
             // При ошибке обновления токена - выходим из системы
             this.logout();
             
-            if (error.response?.data) {
+            if (error.response?.data?.error) {
+                throw { error: error.response.data.error };
+            } else if (error.response?.data) {
                 throw error.response.data;
             } else if (error.message) {
                 throw { error: error.message };

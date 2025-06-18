@@ -37,32 +37,37 @@ const Login = ({ onLogin, onClose }) => {
     setError('');
 
     try {
-      // Используем authApi для входа
+      console.log('Отправка данных для входа:', { 
+        username: formData.username, 
+        password: '***' 
+      });
+
+      // Используем authApi для входа - ВАЖНО: используем login, а не username
       const response = await authApi.login(formData.username, formData.password);
       
       console.log('Успешный вход:', response);
-      
-      // Устанавливаем флаг админа
-      localStorage.setItem('isAdmin', 'true');
       
       // Вызываем колбэки
       onLogin && onLogin(true);
       onClose && onClose();
       
     } catch (err) {
-      console.error('Ошибка входа:', err);
+      console.error('Полная ошибка входа:', err);
       
       // Обрабатываем различные типы ошибок
       let errorMessage = 'Ошибка входа в систему';
       
-      if (err.message) {
-        errorMessage = err.message;
+      if (err.response?.data?.error) {
+        errorMessage = err.response.data.error;
       } else if (err.error) {
         errorMessage = err.error;
+      } else if (err.message) {
+        errorMessage = err.message;
       } else if (typeof err === 'string') {
         errorMessage = err;
       }
       
+      console.log('Отображаемая ошибка:', errorMessage);
       setError(errorMessage);
     } finally {
       setIsLoading(false);
