@@ -81,7 +81,7 @@ export const authApi = {
                 login,
                 password
             });
-            
+                        
             if (response.data.token) {
                 localStorage.setItem('token', response.data.token);
                 localStorage.setItem('refreshToken', response.data.refreshToken || '');
@@ -93,7 +93,16 @@ export const authApi = {
             return response.data;
         } catch (error) {
             console.error('Login Error:', error.response?.data || error.message);
-            throw error.response?.data || new Error('Login failed');
+
+            if (error.response?.status === 401) {
+                throw new Error('Неверный логин или пароль');
+            } else if (error.response?.status === 500) {
+                throw new Error('Ошибка сервера. Попробуйте позже');
+            } else if (!navigator.onLine) {
+                throw new Error('Нет подключения к интернету');
+            }
+            
+            throw error.response?.data || new Error('Ошибка входа в систему');
         }
     },
 

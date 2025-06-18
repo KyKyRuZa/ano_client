@@ -143,7 +143,7 @@ const StaffPage = () => {
     if (typeof employee.media === 'string') {
       return (
         <img
-          src={`https://anotsenimzhizn.ru/${employee.media}`}
+          src={`https://anotsenimzhizn.ru${employee.media}`}
           alt={employee.fullname}
           className="staff-photo"
         />
