@@ -39,12 +39,10 @@ axiosInstance.interceptors.response.use(
                     refreshToken 
                 });
                 
-                if (response.data.success) {
-                    const { token, refreshToken: newRefreshToken } = response.data;
+                if (response.data.token) {
+                    const { token } = response.data;
 
                     localStorage.setItem('token', token);
-                    localStorage.setItem('refreshToken', newRefreshToken);
-
                     updateAuthHeaders(token);
 
                     originalRequest.headers['Authorization'] = `Bearer ${token}`;
@@ -74,13 +72,12 @@ export const authApi = {
             
             console.log('Ответ сервера:', response.data);
             
-            if (response.data.success) {
-                const { token, refreshToken, admin } = response.data;
+            if (response.data.token && response.data.admin) {
+                const { token, admin } = response.data;
                 
                 // Сохраняем данные в localStorage
                 localStorage.setItem('token', token);
-                localStorage.setItem('refreshToken', refreshToken);
-                localStorage.setItem('user', JSON.stringify(admin));
+                localStorage.setItem('admin', JSON.stringify(admin));
                 localStorage.setItem('isAdmin', 'true');
                 
                 // Обновляем заголовки авторизации
@@ -97,17 +94,6 @@ export const authApi = {
                 status: error.response?.status,
                 statusText: error.response?.statusText
             });
-            
-            // Обрабатываем различные типы ошибок
-            if (error.response?.data?.error) {
-                throw { error: error.response.data.error };
-            } else if (error.response?.data) {
-                throw error.response.data;
-            } else if (error.message) {
-                throw { error: error.message };
-            } else {
-                throw { error: 'Ошибка подключения к серверу' };
-            }
         }
     },
 
@@ -118,13 +104,12 @@ export const authApi = {
                 password
             });
             
-            if (response.data.success) {
-                const { token, refreshToken, admin } = response.data;
+            if (response.data.token && response.data.admin) {
+                const { token, admin } = response.data;
                 
                 // Сохраняем данные в localStorage
                 localStorage.setItem('token', token);
-                localStorage.setItem('refreshToken', refreshToken);
-                localStorage.setItem('user', JSON.stringify(admin));
+                localStorage.setItem('admin', JSON.stringify(admin));
                 localStorage.setItem('isAdmin', 'true');
                 
                 // Обновляем заголовки авторизации
@@ -136,17 +121,6 @@ export const authApi = {
             }
         } catch (error) {
             console.error('Registration Error:', error);
-            
-            // Обрабатываем различные типы ошибок
-            if (error.response?.data?.error) {
-                throw { error: error.response.data.error };
-            } else if (error.response?.data) {
-                throw error.response.data;
-            } else if (error.message) {
-                throw { error: error.message };
-            } else {
-                throw { error: 'Ошибка подключения к серверу' };
-            }
         }
     },
 
@@ -162,12 +136,11 @@ export const authApi = {
                 refreshToken 
             });
             
-            if (response.data.success) {
-                const { token, refreshToken: newRefreshToken } = response.data;
+            if (response.data.token) {
+                const { token } = response.data;
                 
-                // Обновляем токены в localStorage
+                // Обновляем токен в localStorage
                 localStorage.setItem('token', token);
-                localStorage.setItem('refreshToken', newRefreshToken);
                 
                 // Обновляем заголовки авторизации
                 updateAuthHeaders(token);
@@ -181,16 +154,6 @@ export const authApi = {
             
             // При ошибке обновления токена - выходим из системы
             this.logout();
-            
-            if (error.response?.data?.error) {
-                throw { error: error.response.data.error };
-            } else if (error.response?.data) {
-                throw error.response.data;
-            } else if (error.message) {
-                throw { error: error.message };
-            } else {
-                throw { error: 'Ошибка обновления токена' };
-            }
         }
     },
 
@@ -198,13 +161,13 @@ export const authApi = {
         // Очищаем все данные из localStorage
         localStorage.removeItem('token');
         localStorage.removeItem('refreshToken');
-        localStorage.removeItem('user');
+        localStorage.removeItem('admin');
         localStorage.removeItem('isAdmin');
         
         // Удаляем заголовки авторизации
         updateAuthHeaders(null);
         
-        console.log('Пользователь вышел из системы');
+        console.log('Администратор вышел из системы');
     },
 
     isAuthenticated() {
@@ -213,12 +176,12 @@ export const authApi = {
         return !!(token && isAdmin === 'true');
     },
 
-    getCurrentUser() {
+    getCurrentAdmin() {
         try {
-            const userStr = localStorage.getItem('user');
-            return userStr ? JSON.parse(userStr) : null;
+            const adminStr = localStorage.getItem('admin');
+            return adminStr ? JSON.parse(adminStr) : null;
         } catch (error) {
-            console.error('Ошибка парсинга данных пользователя:', error);
+            console.error('Ошибка парсинга данных администратора:', error);
             return null;
         }
     },

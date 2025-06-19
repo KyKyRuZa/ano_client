@@ -23,6 +23,10 @@ const ProjectsPage = () => {
   });
   const [isEditing, setIsEditing] = useState(false);
 
+  // Состояния для подтверждения удаления
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [projectToDelete, setProjectToDelete] = useState(null);
+
   useEffect(() => {
     fetchProjects();
   }, []);
@@ -108,51 +112,34 @@ const ProjectsPage = () => {
       setIsModalOpen(false);
     } catch (err) {
       console.error('Ошибка при сохранении:', err);
-      const errorMessage = err.response?.data?.error || err.message || 'Не удалось сохранить данные проекта';
+      const errorMessage = 'Не удалось сохранить данные программы';
       setError(errorMessage);
     }
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm('Вы уверены, что хотите удалить этот проект?')) {
-      try {
-        await projectApi.delete(id);
-        setProjects(projects.filter(p => p.id !== id));
-      } catch (err) {
-        console.error('Ошибка удаления проекта:', err);
-        setError(err.message || 'Ошибка при удалении проекта');
-      }
+  const handleDeleteClick = (id) => {
+    const project = projects.find(p => p.id === id);
+    if (project) {
+      setProjectToDelete(project);
+      setShowDeleteConfirm(true);
     }
   };
 
-  const renderMediaPreview = (project) => {
-    if (!project.media) return <span>-</span>;
-
-    if (typeof project.media === 'string') {
-      return (
-        <img
-          src={project.media}
-          alt={project.title}
-          className="project-photo-thumbnail"
-        />
-      );
+  const confirmDelete = async () => {
+    const id = projectToDelete.id;
+    try {
+      await projectApi.delete(id);
+      setProjects(projects.filter(p => p.id !== id));
+    } catch (err) {
+      console.error('Ошибка удаления проекта:', err);
+      setError(err.message || 'Ошибка при удалении проекта');
+    } finally {
+      setShowDeleteConfirm(false);
+      setProjectToDelete(null);
     }
-
-    if (project.media instanceof File) {
-      return (
-        <img
-          src={URL.createObjectURL(project.media)}
-          alt={project.title}
-          className="project-photo-thumbnail"
-        />
-      );
-    }
-
-    return <span>-</span>;
   };
 
   if (loading) return <div className="loading">Загрузка...</div>;
-  if (error) return <div className="error">Ошибка: {error}</div>;
 
   return (
     <div className="admin-page">
@@ -162,6 +149,10 @@ const ProjectsPage = () => {
           <FontAwesomeIcon icon={faPlus} /> Добавить проект
         </button>
       </div>
+
+      {error && (
+        <div className="error-message">{error}</div>
+      )}
 
       <div className="table-container">
         <table className="admin-table">
@@ -183,7 +174,7 @@ const ProjectsPage = () => {
                       : project.description
                     : '-'}
                 </td>
-                <td>
+                <td className='act'>
                   <div className="action-buttons">
                     <button
                       className="btn btn-edit"
@@ -194,7 +185,7 @@ const ProjectsPage = () => {
                     </button>
                     <button
                       className="btn btn-delete"
-                      onClick={() => handleDelete(project.id)}
+                      onClick={() => handleDeleteClick(project.id)}
                       title="Удалить"
                     >
                       <FontAwesomeIcon icon={faTrash} />
@@ -207,7 +198,7 @@ const ProjectsPage = () => {
         </table>
       </div>
 
-      {/* Модальное окно */}
+      {/* Модальное окно для добавления/редактирования */}
       {isModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content">
@@ -220,6 +211,7 @@ const ProjectsPage = () => {
                   name="title"
                   value={currentProject.title}
                   onChange={handleInputChange}
+                  placeholder='Название проекта'
                   required
                 />
               </div>
@@ -231,6 +223,7 @@ const ProjectsPage = () => {
                   value={currentProject.description}
                   onChange={handleInputChange}
                   rows="4"
+                  placeholder='Описание проекта'
                   required
                 />
               </div>
@@ -243,24 +236,51 @@ const ProjectsPage = () => {
                   accept="image/*"
                   onChange={handleInputChange}
                 />
-                {isEditing && currentProject.media && (
-                  <small>Новое изображение заменит текущее</small>
+                 <small> Разрешённые форматы: JPG, PNG. Максимальный размер: 10 МБ</small>
+                </div>
+                {error && (
+                  <div className="modal-error">
+                    {error}
+                  </div>
                 )}
-              </div>
-
               <div className="modal-actions">
-                <button type="submit" className="btn btn-save">
-                  <FontAwesomeIcon icon={faSave} /> Сохранить
+                <button type="submit" className="btn btn-save">Сохранить
                 </button>
-                <button
-                  type="button"
-                  className="btn btn-cancel"
-                  onClick={() => setIsModalOpen(false)}
-                >
-                  <FontAwesomeIcon icon={faTimes} /> Отмена
+                <button type="button" className="btn btn-cancel" onClick={() => setIsModalOpen(false)}> Отмена
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Модальное окно подтверждения удаления */}
+      {showDeleteConfirm && (
+        <div className="modal-overlay">
+          <div className="modal-content confirm-delete-modal">
+            <h2>Подтвердите удаление</h2>
+            <p>
+              Вы уверены, что хотите удалить проект <strong>{projectToDelete?.title}</strong>?
+            </p>  
+                  {error && (
+                    <div className="modal-error">
+                      {error}
+                    </div>
+                  )}
+            <div className="modal-actions">
+              <button
+                className="btn btn-danger"
+                onClick={confirmDelete}
+              >
+                Удалить
+              </button>
+              <button
+                className="btn btn-cancel"
+                onClick={() => setShowDeleteConfirm(false)}
+              >
+                Отмена
+              </button>
+            </div>
           </div>
         </div>
       )}

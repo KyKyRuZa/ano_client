@@ -1,3 +1,18 @@
+.mobile-menu-btn {
+  display: none;
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  z-index: 1001;
+  background: #BC0308;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 18px;
+}
+
 .admin-layout {
   display: flex;
   height: 100vh;
@@ -17,14 +32,16 @@
   padding: 20px;
 }
 .admin-page h1 {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
+
 .admin-table {
   width: 100%;
   border-collapse: collapse;
 }
 
-.admin-table th, .admin-table td {
+.admin-table th,
+.admin-table td {
   border: 1px solid #ddd;
   padding: 12px;
   text-align: left;
@@ -33,9 +50,13 @@
 .admin-table th {
   background-color: #f2f2f2;
 }
-.staff-photo{
+
+.staff-photo {
   width: 100px;
   height: 100px;
+}
+.act {
+  width: 100px;
 }
 
 .action-buttons {
@@ -50,6 +71,7 @@
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
+
 .btn-add {
   margin-bottom: 20px;
   padding: 10px 15px;
@@ -59,82 +81,194 @@
   cursor: pointer;
   border-radius: 4px;
 }
+
 .btn-edit {
   background-color: #4CAF50;
   color: white;
 }
+
 .btn-delete {
   background-color: #f44336;
   color: white;
 }
+
 .btn-add:hover {
   background-color: #218838;
 }
 
 .admin-page {
-  padding: 2rem;
+  padding: 32px;
 }
 
 .page-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 24px;
 }
 
-.btn-save {
-  background-color: #007bff;
-  color: white;
-}
-.btn-cancel {
-  background-color: #6c757d;
-  color: white;
-}
+/* --- Модальное окно --- */
 
 .modal-overlay {
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
 }
+
 .modal-content {
   background: white;
-  padding: 2rem;
+  padding: 32px;
   border-radius: 8px;
-  width: 500px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  animation: fadeInUp 0.3s ease-in-out;
 }
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-content h2 {
+  margin-bottom: 24px;
+  font-size: 22px;
+  color: #333;
+}
+
+/* --- Форма внутри модала --- */
+
 .form-group {
-  margin-bottom: 1rem;
+  margin-bottom: 16px;
 }
+
 .form-group label {
   display: block;
-  margin-bottom: 0.5rem;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #555;
 }
-.form-group input, .form-group textarea {
+
+.form-group textarea {
   width: 100%;
-  padding: 0.5rem;
+  min-height: 60px;
+  max-height: 200px;
+  padding: 10px 13px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  resize: none;
+  overflow-y: auto;
+  transition: border-color 0.3s ease;
 }
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 10px 13px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+}
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: #999;
+  font-size: 14px;
+    font-family: 'Jost', Arial, sans-serif;
+}
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.form-group small {
+  display: block;
+  margin-top: 6px;
+  color: #888;
+  font-size: 14px;
+}
+
+/* --- Кнопки в модале --- */
+
 .modal-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 1rem;
+  gap: 16px;
+  margin-top: 24px;
 }
 
-.mobile-menu-btn {
-  display: none;
-  position: fixed;
-  top: 15px;
-  left: 15px;
-  z-index: 1001;
-  background: #BC0308;
+.btn {
+  padding: 10px 19px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.btn-save {
+  background-color: #28a745;
+  color: white;
+}
+
+.btn-cancel {
+  background-color: #6c757d;
+  color: white;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+/* --- Сообщение об ошибке в модале --- */
+
+.modal-error {
+  color: #e74c3c;
+  font-size: 14px;
+  margin-top: -8px;
+  margin-bottom: 16px;
+}
+
+.confirm-delete-modal {
+  max-width: 400px;
+  padding: 20px;
+  text-align: center;
+}
+
+.confirm-delete-modal h2 {
+  margin-bottom: 15px;
+}
+
+.confirm-delete-modal p {
+  margin-bottom: 20px;
+}
+
+.btn.btn-danger {
+  background-color: #dc3545;
   color: white;
   border: none;
-  padding: 10px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 18px;
+}
+
+.btn.btn-danger:hover {
+  background-color: #c82333;
 }

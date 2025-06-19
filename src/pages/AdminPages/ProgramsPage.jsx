@@ -3,9 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faEdit,
   faTrash,
-  faPlus,
-  faSave,
-  faTimes
+  faPlus
 } from '@fortawesome/free-solid-svg-icons';
 import programApi from '../../api/program';
 import '../../style/admin/admin.staff.css';
@@ -22,6 +20,10 @@ const ProgramsPage = () => {
     media: null
   });
   const [isEditing, setIsEditing] = useState(false);
+
+  // Состояния для подтверждения удаления
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [programToDelete, setProgramToDelete] = useState(null);
 
   useEffect(() => {
     fetchPrograms();
@@ -54,7 +56,7 @@ const ProgramsPage = () => {
           media: file
         }));
       } else if (file) {
-        alert('Можно загружать только изображения');
+        setError('Можно загружать только изображения');
       }
     } else {
       setCurrentProgram((prev) => ({ ...prev, [name]: value }));
@@ -81,87 +83,76 @@ const ProgramsPage = () => {
     setIsModalOpen(true);
   };
 
- const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
   e.preventDefault();
 
-  // Валидация
+  // Валидация: обязательные поля
   if (!currentProgram.title || !currentProgram.description) {
     setError('Название и описание программы обязательны');
     return;
   }
 
-  // Создание FormData
+  // Валидация: если есть файл, проверяем его тип
+  if (currentProgram.media && !(currentProgram.media instanceof File)) {
+    setError('Некорректный формат медиафайла');
+    return;
+  }
+
+  if (currentProgram.media instanceof File && !currentProgram.media.type.startsWith('image/')) {
+    setError('Можно загружать только изображения');
+    return;
+  }
+
   const formData = new FormData();
   formData.append('title', currentProgram.title);
   formData.append('description', currentProgram.description);
 
-  // Добавление медиафайла, если он существует
   if (currentProgram.media instanceof File) {
     formData.append('media', currentProgram.media);
   }
 
   try {
-    // Логирование данных перед отправкой
-    console.log('Отправляю данные:', Object.fromEntries(formData));
-
-    // Отправка запроса
     if (isEditing) {
       await programApi.update(currentProgram.id, formData);
     } else {
       await programApi.create(formData);
     }
 
-    // Обновление списка программ и закрытие модального окна
     fetchPrograms();
     setIsModalOpen(false);
+    setError(null); // Очистка ошибок
   } catch (err) {
     console.error('Ошибка при сохранении:', err);
     const errorMessage =
-      err.response?.data?.error || err.message || 'Не удалось сохранить данные программы';
+      err.response?.data?.error ||
+      'Произошла ошибка при сохранении данных программы';
     setError(errorMessage);
   }
 };
 
-  const handleDelete = async (id) => {
-    if (window.confirm('Вы уверены, что хотите удалить эту программу?')) {
-      try {
-        await programApi.delete(id);
-        setPrograms(programs.filter(p => p.id !== id));
-      } catch (err) {
-        console.error('Ошибка удаления программы:', err);
-        setError(err.message || 'Ошибка при удалении программы');
-      }
+  const handleDeleteClick = (id) => {
+    const program = programs.find(p => p.id === id);
+    if (program) {
+      setProgramToDelete(program);
+      setShowDeleteConfirm(true);
     }
   };
 
-  const renderMediaPreview = (program) => {
-    if (!program.media) return <span>-</span>;
-
-    if (typeof program.media === 'string') {
-      return (
-        <img
-          src={program.media}
-          alt={program.title}
-          className="program-photo-thumbnail"
-        />
-      );
+  const confirmDelete = async () => {
+    const id = programToDelete.id;
+    try {
+      await programApi.delete(id);
+      setPrograms(programs.filter(p => p.id !== id));
+    } catch (err) {
+      console.error('Ошибка удаления программы:', err);
+      setError(err.message || 'Ошибка при удалении программы');
+    } finally {
+      setShowDeleteConfirm(false);
+      setProgramToDelete(null);
     }
-
-    if (program.media instanceof File) {
-      return (
-        <img
-          src={URL.createObjectURL(program.media)}
-          alt={program.title}
-          className="program-photo-thumbnail"
-        />
-      );
-    }
-
-    return <span>-</span>;
   };
 
   if (loading) return <div className="loading">Загрузка...</div>;
-  if (error) return <div className="error">Ошибка: {error}</div>;
 
   return (
     <div className="admin-page">
@@ -171,6 +162,10 @@ const ProgramsPage = () => {
           <FontAwesomeIcon icon={faPlus} /> Добавить программу
         </button>
       </div>
+
+      {error && (
+        <div className="error-message">{error}</div>
+      )}
 
       <div className="table-container">
         <table className="admin-table">
@@ -192,7 +187,7 @@ const ProgramsPage = () => {
                       : program.description
                     : '-'}
                 </td>
-                <td>
+                <td className='act'>
                   <div className="action-buttons">
                     <button
                       className="btn btn-edit"
@@ -203,7 +198,7 @@ const ProgramsPage = () => {
                     </button>
                     <button
                       className="btn btn-delete"
-                      onClick={() => handleDelete(program.id)}
+                      onClick={() => handleDeleteClick(program.id)}
                       title="Удалить"
                     >
                       <FontAwesomeIcon icon={faTrash} />
@@ -216,7 +211,7 @@ const ProgramsPage = () => {
         </table>
       </div>
 
-      {/* Модальное окно */}
+      {/* Модальное окно для добавления/редактирования */}
       {isModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content">
@@ -252,24 +247,52 @@ const ProgramsPage = () => {
                   accept="image/*"
                   onChange={handleInputChange}
                 />
-                {isEditing && currentProgram.media && (
-                  <small>Новое изображение заменит текущее</small>
-                )}
+                 <small> Разрешённые форматы: JPG, PNG. Максимальный размер: 10 МБ</small>
               </div>
-
+                  {error && (
+                    <div className="modal-error">
+                      {error}
+                    </div>
+                  )}
               <div className="modal-actions">
-                <button type="submit" className="btn btn-save">
-                  <FontAwesomeIcon icon={faSave} /> Сохранить
+                <button type="submit" className="btn btn-save"> Сохранить
                 </button>
-                <button
-                  type="button"
-                  className="btn btn-cancel"
-                  onClick={() => setIsModalOpen(false)}
-                >
-                  <FontAwesomeIcon icon={faTimes} /> Отмена
+                <button type="button" className="btn btn-cancel"onClick={() => setIsModalOpen(false)} >
+                   Отмена
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Модальное окно подтверждения удаления */}
+      {showDeleteConfirm && (
+        <div className="modal-overlay">
+          <div className="modal-content confirm-delete-modal">
+            <h2>Подтвердите удаление</h2>
+            <p>
+              Вы уверены, что хотите удалить программу <strong>{programToDelete?.title}</strong>?
+            </p>
+              {error && (
+                    <div className="modal-error">
+                      {error}
+                    </div>
+                  )}
+            <div className="modal-actions">
+              <button
+                className="btn btn-danger"
+                onClick={confirmDelete}
+              >
+                Удалить
+              </button>
+              <button
+                className="btn btn-cancel"
+                onClick={() => setShowDeleteConfirm(false)}
+              >
+                Отмена
+              </button>
+            </div>
           </div>
         </div>
       )}

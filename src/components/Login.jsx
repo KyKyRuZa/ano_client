@@ -6,7 +6,7 @@ import '../style/admin/login.css';
 
 const Login = ({ onLogin, onClose }) => {
   const [formData, setFormData] = useState({
-    username: '',
+    login: '',
     password: ''
   });
 
@@ -28,7 +28,7 @@ const Login = ({ onLogin, onClose }) => {
     e.preventDefault();
 
     // Проверяем заполненность полей
-    if (!formData.username.trim() || !formData.password.trim()) {
+    if (!formData.login.trim() || !formData.password.trim()) {
       setError('Пожалуйста, заполните все поля');
       return;
     }
@@ -37,23 +37,13 @@ const Login = ({ onLogin, onClose }) => {
     setError('');
 
     try {
-      console.log('Отправка данных для входа:', { 
-        username: formData.username, 
-        password: '***' 
-      });
-
-      // Используем authApi для входа - ВАЖНО: используем login, а не username
-      const response = await authApi.login(formData.username, formData.password);
-      
-      console.log('Успешный вход:', response);
+      const response = await authApi.login(formData.login, formData.password);
       
       // Вызываем колбэки
       onLogin && onLogin(true);
       onClose && onClose();
       
     } catch (err) {
-      console.error('Полная ошибка входа:', err);
-      
       // Обрабатываем различные типы ошибок
       let errorMessage = 'Ошибка входа в систему';
       
@@ -67,7 +57,6 @@ const Login = ({ onLogin, onClose }) => {
         errorMessage = err;
       }
       
-      console.log('Отображаемая ошибка:', errorMessage);
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -93,12 +82,12 @@ const Login = ({ onLogin, onClose }) => {
           )}
           
           <div className="login-field">
-            <label htmlFor="username">Логин</label>
+            <label htmlFor="login">Логин</label>
             <input
               type="text"
-              id="username"
-              name="username"
-              value={formData.username}
+              id="login"
+              name="login"
+              value={formData.login}
               onChange={handleChange}
               placeholder="Введите логин"
               disabled={isLoading}
@@ -136,7 +125,7 @@ const Login = ({ onLogin, onClose }) => {
           <button 
             type="submit" 
             className="login-submit-btn"
-            disabled={isLoading || !formData.username.trim() || !formData.password.trim()}
+            disabled={isLoading || !formData.login.trim() || !formData.password.trim()}
           >
             {isLoading ? 'Вход...' : 'Войти'}
           </button>
