@@ -2,209 +2,132 @@ import axios from 'axios';
 
 const API_URL = 'https://anotsenimzhizn.ru/api/auth';
 
-const axiosInstance = axios.create({
-    baseURL: API_URL,
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    timeout: 10000 // 10 секунд таймаут
+const apiClient = axios.create({
+  baseURL: API_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  timeout: 10000,
 });
 
-const updateAuthHeaders = (token) => {
-    if (token) {
-        axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+let isRefreshing = false;
+let failedRequestsQueue = [];
+
+const processQueue = (error, token = null) => {
+  failedRequestsQueue.forEach(prom => {
+    if (error) {
+      prom.reject(error);
     } else {
-        delete axiosInstance.defaults.headers.common['Authorization'];
+      prom.resolve(token);
     }
+  });
+  failedRequestsQueue = [];
 };
 
-// Интерцептор для автоматического обновления токенов
-axiosInstance.interceptors.response.use(
-    (response) => response,
-    async (error) => {
-        const originalRequest = error.config;
+apiClient.interceptors.response.use(
+  response => response,
+  async error => {
+    const originalRequest = error.config;
 
-        if (error.response?.status === 401 && !originalRequest._retry) {
-            originalRequest._retry = true;
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      if (isRefreshing) {
+        return new Promise(function(resolve, reject) {
+          failedRequestsQueue.push({ resolve, reject });
+        }).then(token => {
+          originalRequest.headers['Authorization'] = 'Bearer ' + token;
+          return apiClient(originalRequest);
+        }).catch(err => {
+          return Promise.reject(err);
+        });
+      }
 
-            try {
-                const refreshToken = localStorage.getItem('refreshToken');
-                
-                if (!refreshToken) {
-                    authApi.logout();
-                    return Promise.reject(error);
-                }
+      originalRequest._retry = true;
+      isRefreshing = true;
 
-                const response = await axiosInstance.post('/refresh-token', { 
-                    refreshToken 
-                });
-                
-                if (response.data.token) {
-                    const { token } = response.data;
+      try {
+        const refreshToken = localStorage.getItem('refreshToken');
+        if (!refreshToken) throw new Error('Нет такого пользователя');
 
-                    localStorage.setItem('token', token);
-                    updateAuthHeaders(token);
+        const res = await apiClient.post('/refresh-token', { refreshToken });
+        const { token } = res.data;
 
-                    originalRequest.headers['Authorization'] = `Bearer ${token}`;
-
-                    return axiosInstance(originalRequest);
-                }
-            } catch (refreshError) {
-                console.error('Ошибка обновления токена:', refreshError);
-                authApi.logout();
-                return Promise.reject(refreshError);
-            }
-        }
-
-        return Promise.reject(error);
-    }
-);
-
-export const authApi = {
-    async login(login, password) {
-        try {
-            console.log('Отправка запроса на авторизацию...');
-            
-            const response = await axiosInstance.post('/login', {
-                login,
-                password
-            });
-            
-            console.log('Ответ сервера:', response.data);
-            
-            if (response.data.token && response.data.admin) {
-                const { token, admin } = response.data;
-                
-                // Сохраняем данные в localStorage
-                localStorage.setItem('token', token);
-                localStorage.setItem('admin', JSON.stringify(admin));
-                localStorage.setItem('isAdmin', 'true');
-                
-                // Обновляем заголовки авторизации
-                updateAuthHeaders(token);
-                
-                return response.data;
-            } else {
-                throw new Error(response.data.error || 'Ошибка авторизации');
-            }
-        } catch (error) {
-            console.error('Login Error Details:', {
-                message: error.message,
-                response: error.response?.data,
-                status: error.response?.status,
-                statusText: error.response?.statusText
-            });
-        }
-    },
-
-    async register(login, password) {
-        try {
-            const response = await axiosInstance.post('/register', {
-                login,
-                password
-            });
-            
-            if (response.data.token && response.data.admin) {
-                const { token, admin } = response.data;
-                
-                // Сохраняем данные в localStorage
-                localStorage.setItem('token', token);
-                localStorage.setItem('admin', JSON.stringify(admin));
-                localStorage.setItem('isAdmin', 'true');
-                
-                // Обновляем заголовки авторизации
-                updateAuthHeaders(token);
-                
-                return response.data;
-            } else {
-                throw new Error(response.data.error || 'Ошибка регистрации');
-            }
-        } catch (error) {
-            console.error('Registration Error:', error);
-        }
-    },
-
-    async refreshToken() {
-        try {
-            const refreshToken = localStorage.getItem('refreshToken');
-            
-            if (!refreshToken) {
-                throw new Error('Refresh token не найден');
-            }
-
-            const response = await axiosInstance.post('/refresh-token', { 
-                refreshToken 
-            });
-            
-            if (response.data.token) {
-                const { token } = response.data;
-                
-                // Обновляем токен в localStorage
-                localStorage.setItem('token', token);
-                
-                // Обновляем заголовки авторизации
-                updateAuthHeaders(token);
-                
-                return response.data;
-            } else {
-                throw new Error(response.data.error || 'Ошибка обновления токена');
-            }
-        } catch (error) {
-            console.error('Token Refresh Error:', error);
-            
-            // При ошибке обновления токена - выходим из системы
-            this.logout();
-        }
-    },
-
-    logout() {
-        // Очищаем все данные из localStorage
+        localStorage.setItem('token', token);
+        apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        processQueue(null, token);
+        return apiClient(originalRequest);
+      } catch (err) {
+        processQueue(err, null);
         localStorage.removeItem('token');
         localStorage.removeItem('refreshToken');
         localStorage.removeItem('admin');
         localStorage.removeItem('isAdmin');
-        
-        // Удаляем заголовки авторизации
-        updateAuthHeaders(null);
-        
-        console.log('Администратор вышел из системы');
-    },
-
-    isAuthenticated() {
-        const token = localStorage.getItem('token');
-        const isAdmin = localStorage.getItem('isAdmin');
-        return !!(token && isAdmin === 'true');
-    },
-
-    getCurrentAdmin() {
-        try {
-            const adminStr = localStorage.getItem('admin');
-            return adminStr ? JSON.parse(adminStr) : null;
-        } catch (error) {
-            console.error('Ошибка парсинга данных администратора:', error);
-            return null;
-        }
-    },
-
-    getToken() {
-        return localStorage.getItem('token');
-    },
-
-    getRefreshToken() {
-        return localStorage.getItem('refreshToken');
+        return Promise.reject(err);
+      } finally {
+        isRefreshing = false;
+      }
     }
+
+    return Promise.reject(error);
+  }
+);
+
+export const authApi = {
+  async login(login, password) {
+    try {
+      const res = await apiClient.post('/login', { login, password });
+
+      if (res.data.token && res.data.admin) {
+        const { token, refreshToken, admin } = res.data;
+
+        localStorage.setItem('token', token);
+        localStorage.setItem('refreshToken', refreshToken);
+        localStorage.setItem('admin', JSON.stringify(admin));
+        localStorage.setItem('isAdmin', 'true');
+
+        apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+        return res.data;
+      } else {
+        throw new Error(res.data.error || 'Ошибка авторизации');
+      }
+    } catch (error) {
+      const message = error.response?.data?.error ||
+                      error.message ||
+                      'Ошибка входа в систему';
+      throw new Error(message);
+    }
+  },
+
+  logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('admin');
+    localStorage.removeItem('isAdmin');
+    delete apiClient.defaults.headers.common['Authorization'];
+  },
+
+  isAuthenticated() {
+    return localStorage.getItem('isAdmin') === 'true';
+  },
+
+  getToken() {
+    return localStorage.getItem('token');
+  },
+
+  getCurrentAdmin() {
+    try {
+      const admin = localStorage.getItem('admin');
+      return admin ? JSON.parse(admin) : null;
+    } catch (e) {
+      console.error('Ошибка чтения данных админа:', e);
+      return null;
+    }
+  }
 };
 
-// Инициализация при загрузке модуля
-const initializeAuth = () => {
-    const token = localStorage.getItem('token');
-    if (token) {
-        updateAuthHeaders(token);
-        console.log('Токен авторизации восстановлен из localStorage');
-    }
-};
-
-// Вызываем инициализацию
-initializeAuth();
+// Инициализация заголовков при загрузке
+if (authApi.getToken()) {
+  apiClient.defaults.headers.common['Authorization'] = `Bearer ${authApi.getToken()}`;
+}
 
 export default authApi;

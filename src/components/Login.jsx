@@ -20,14 +20,12 @@ const Login = ({ onLogin, onClose }) => {
       ...prev,
       [name]: value
     }));
-    // Очищаем ошибку при изменении полей
     if (error) setError('');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Проверяем заполненность полей
     if (!formData.login.trim() || !formData.password.trim()) {
       setError('Пожалуйста, заполните все поля');
       return;
@@ -37,27 +35,12 @@ const Login = ({ onLogin, onClose }) => {
     setError('');
 
     try {
-      const response = await authApi.login(formData.login, formData.password);
-      
-      // Вызываем колбэки
+      await authApi.login(formData.login, formData.password);
       onLogin && onLogin(true);
       onClose && onClose();
-      
     } catch (err) {
-      // Обрабатываем различные типы ошибок
-      let errorMessage = 'Ошибка входа в систему';
-      
-      if (err.response?.data?.error) {
-        errorMessage = err.response.data.error;
-      } else if (err.error) {
-        errorMessage = err.error;
-      } else if (err.message) {
-        errorMessage = err.message;
-      } else if (typeof err === 'string') {
-        errorMessage = err;
-      }
-      
-      setError(errorMessage);
+      setError('Неверный логин или пароль');
+      onLogin && onLogin(false);
     } finally {
       setIsLoading(false);
     }
@@ -73,14 +56,10 @@ const Login = ({ onLogin, onClose }) => {
         <div className="login-header">
           <h2>Вход в админ панель</h2>
         </div>
-        
+
         <form onSubmit={handleSubmit} className="login-form">
-          {error && (
-            <div className="login-error">
-              {error}
-            </div>
-          )}
-          
+          {error && <div className="login-error">{error}</div>}
+
           <div className="login-field">
             <label htmlFor="login">Логин</label>
             <input
@@ -90,8 +69,6 @@ const Login = ({ onLogin, onClose }) => {
               value={formData.login}
               onChange={handleChange}
               placeholder="Введите логин"
-              disabled={isLoading}
-              autoComplete="username"
               required
             />
           </div>
@@ -106,8 +83,6 @@ const Login = ({ onLogin, onClose }) => {
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="Введите пароль"
-                disabled={isLoading}
-                autoComplete="current-password"
                 required
               />
               <button
@@ -121,9 +96,9 @@ const Login = ({ onLogin, onClose }) => {
               </button>
             </div>
           </div>
-          
-          <button 
-            type="submit" 
+
+          <button
+            type="submit"
             className="login-submit-btn"
             disabled={isLoading || !formData.login.trim() || !formData.password.trim()}
           >
