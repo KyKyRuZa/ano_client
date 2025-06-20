@@ -361,7 +361,7 @@ function MessageList() {
                 <div className="message-footer">
                   <span className="message-date">
                     {format(new Date(message.timestamp), 'dd.MM.yyyy HH:mm', {
-                      timeZone: 'Europe/Moscow',
+                      timeZone: 'Europe/Samara',
                     })}                  
                   </span>
                 </div>
