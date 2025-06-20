@@ -360,11 +360,12 @@ function MessageList() {
                 <div className="message-footer">
                   <span className="message-date">
                     {(() => {
-                      const timestamp = message.timestamp;
-                      const cleanTimestamp = `${timestamp.slice(0, 10)}T${timestamp.slice(11)}Z`;
-                      const date = new Date(cleanTimestamp);
+                      const [dateStr, timeStr] = message.timestamp.split(' ');
+                      const [year, month, day] = dateStr.split('-');
+                      const [hours, minutes] = timeStr.split(':');
 
-                      if (isNaN(date.getTime())) return '—'; // Проверка на валидность даты
+                      // Создаём объект Date в часовом поясе Москвы
+                      const date = new Date(Date.UTC(year, month - 1, day, hours, minutes));
 
                       return new Intl.DateTimeFormat('ru-RU', {
                         day: '2-digit',
