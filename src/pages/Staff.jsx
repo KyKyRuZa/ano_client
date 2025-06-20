@@ -57,7 +57,7 @@ const StaffPage = () => {
               <div className="staff-card-avatar">
                 {member.media ? (
                   <img 
-                    src={`https://anotsenimzhizn.ru${member.media}`} 
+                    src={member.media}
                     alt={member.fullname} 
                   />
                 ) : (
