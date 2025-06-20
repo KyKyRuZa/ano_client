@@ -3,7 +3,6 @@
     background-color: #BC0308;
     height: 100vh;
     transition: all 0.3s ease;
-    overflow-y: auto;
 }
 .admin-logo{
     width: 184px;

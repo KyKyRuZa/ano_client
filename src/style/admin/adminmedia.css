@@ -130,6 +130,7 @@
     justify-content: flex-start;
     align-items: center;
     padding-top: 80px;
+    overflow-y: auto;
   }
 
   .sidebar.mobile-open {

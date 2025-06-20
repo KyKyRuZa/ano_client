@@ -3,9 +3,7 @@ import '../style/home/staff.css';
 import Header from '../components/ux/Header';
 import Footer from '../components/ux/Footer';
 import staffApi from '../api/staff';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser } from '@fortawesome/free-solid-svg-icons';
-import { StaffPageSkeleton } from '../components/Skeletons/SkeletonLoader';
+import { Link } from 'react-router-dom';
 
 const StaffPage = () => {
   const [staff, setStaff] = useState([]);
@@ -16,7 +14,13 @@ const StaffPage = () => {
     const fetchStaff = async () => {
       try {
         const staffData = await staffApi.getAll();
-        setStaff(staffData);
+
+        // Сортировка по алфавиту
+        const sortedStaff = [...staffData].sort((a, b) =>
+          a.fullname.localeCompare(b.fullname)
+        );
+
+        setStaff(sortedStaff);
         setLoading(false);
       } catch (err) {
         setError(err);
@@ -29,55 +33,42 @@ const StaffPage = () => {
 
   if (loading) return (
     <>
-      <Header/>
-      <StaffPageSkeleton/>
-      <Footer/>
+      <Header />
+      ЗАГРУЗКА
+      <Footer />
     </>
   );
 
   if (error) return (
     <>
-      <Header/>
+      <Header />
       <div className="staff-page">
         <h1>Ошибка загрузки данных</h1>
         <p>{error.message}</p>
       </div>
-      <Footer/>
+      <Footer />
     </>
   );
 
   return (
     <>
-      <Header/>
+      <Header />
       <div className="staff-page">
         <h1>Наша команда</h1>
         <div className="staff-grid">
           {staff.map((member) => (
-            <div key={member.id} className="staff-card">
-              <div className="staff-card-avatar">
-                {member.media ? (
-                  <img src={`https://anotsenimzhizn.ru${member.media}`}  alt={member.fullname} />
-                ) : (
-                  <FontAwesomeIcon icon={faUser} className="default-avatar" />
-                )}
+            <Link to={`/personal/${member.id}`} key={member.id} className="staff-card-link">
+              <div className="staff-card">
+                <div className="staff-card-content">
+                  <h3>{member.fullname}</h3>
+                  <p>{member.position}</p>
+                </div>
               </div>
-              <div className="staff-card-content">
-                <h3>{member.fullname}</h3>
-                <p className="staff-position">{member.position}</p>
-                <p className="staff-department">
-                  {member.callsign || 'Отдел не указан'}
-                </p>
-                {member.description && (
-                  <div className="staff-description">
-                    <p>{member.description}</p>
-                  </div>
-                )}
-              </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
-      <Footer/>
+      <Footer />
     </>
   );
 };

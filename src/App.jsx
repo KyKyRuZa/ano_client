@@ -11,6 +11,7 @@ import UserAgreement from './pages/UserAgreement';
 import Disclaimer from './components/Disclaimer';
 import CircleAnimation from './components/CircleAnimation';
 import NotFound from './pages/NotFound';
+import StaffProfilePage from './pages/StaffProfile';
 
 
 const AppContent = () => {
@@ -20,7 +21,6 @@ const AppContent = () => {
 
   const isAdminRoute = location.pathname.startsWith('/admin');
   
-  // Проверяем, является ли текущий путь валидным маршрутом
   const validRoutes = [
     { path: '/', exact: true },
     { path: '/user-agreement', exact: true },
@@ -28,6 +28,7 @@ const AppContent = () => {
     { path: '/personal/', exact: true },
     { path: '/project/:id', exact: false },
     { path: '/program/:id', exact: false },
+    { path: '/personal/:id', exact: false },
     { path: '/admin', exact: true },
     { path: '/admin/*', exact: false }
   ];
@@ -106,6 +107,7 @@ const AppContent = () => {
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/project/:id" element={<Project />} />
               <Route path="/program/:id" element={<Programs />} />
+              <Route path="/personal/:id" element={<StaffProfilePage/>} />
               <Route path="/personal/" element={<StaffPage/>} />
               <Route path="/admin" element={<Navigate to="/admin/projects" replace />} />
               <Route path="/admin/*" element={<AdminLayout />} />

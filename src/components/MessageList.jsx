@@ -362,7 +362,7 @@ function MessageList() {
                  <span className="message-date">
                   {(() => {
                     const originalDate = new Date(message.timestamp);
-                    const adjustedDate = new Date(originalDate.getTime() + 60 * 60 * 1000); // +1 час в миллисекундах
+                    const adjustedDate = new Date(originalDate.getTime() + 60 * 60 * 1000);
                     return format(adjustedDate, 'dd.MM.yyyy HH:mm', {
                       timeZone: 'Europe/Moscow',
                     });

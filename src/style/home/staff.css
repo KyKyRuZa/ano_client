@@ -1,3 +1,8 @@
+.staff-card-link {
+  text-decoration: none;
+  color: inherit;
+}
+
 .staff-page {
   max-width: 1200px;
   margin: 120px auto;
@@ -5,13 +10,11 @@
 }
 
 .staff-page h1 {
-  text-align: center;
   margin-bottom: 30px;
 }
 
 .staff-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 20px;
 }
 
@@ -20,12 +23,11 @@
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  transition: transform 0.3s ease;
-  text-align: center;
+  transition: transform 0.3s ease; 
 }
 
 .staff-card:hover {
-  transform: scale(1.05);
+  transform: scale(1.005);
 }
 
 .staff-card-avatar {
@@ -71,14 +73,9 @@
   margin-bottom: 10px;
 }
 
-.staff-about {
+.staff-description {
   margin-top: 10px;
   font-size: 0.9em;
   color: #333;
 }
 
-@media (max-width: 768px) {
-  .staff-grid {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  }
-}
