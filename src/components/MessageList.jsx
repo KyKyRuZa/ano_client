@@ -359,11 +359,15 @@ function MessageList() {
                 {message.text && <p className="message-text">{message.text}</p>}
                 
                 <div className="message-footer">
-                  <span className="message-date">
-                    {format(new Date(message.timestamp), 'dd.MM.yyyy HH:mm', {
-                      timeZone: 'Europe/Samara',
-                    })}                  
-                  </span>
+                 <span className="message-date">
+                  {(() => {
+                    const originalDate = new Date(message.timestamp);
+                    const adjustedDate = new Date(originalDate.getTime() + 60 * 60 * 1000); // +1 час в миллисекундах
+                    return format(adjustedDate, 'dd.MM.yyyy HH:mm', {
+                      timeZone: 'Europe/Moscow',
+                    });
+                  })()}
+                </span>
                 </div>
               </div>
             </div>
