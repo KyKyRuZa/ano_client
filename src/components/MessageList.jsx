@@ -359,7 +359,14 @@ function MessageList() {
                 
                 <div className="message-footer">
                   <span className="message-date">
-                     {new Date(message.timestamp)}
+                     {new Date(message.timestamp).toLocaleString('ru-RU', {
+                      day: '2-digit',
+                      month: '2-digit', 
+                      year: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      timeZone: 'Europe/Moscow'
+                    })}
                   </span>
                 </div>
               </div>
