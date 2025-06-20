@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
-import { zonedTimeToUtc, format } from 'date-fns-tz';
+import { format } from 'date-fns-tz';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faPlay, 
@@ -360,7 +360,9 @@ function MessageList() {
                 
                 <div className="message-footer">
                   <span className="message-date">
-                       {format(zonedTimeToUtc(new Date(message.timestamp), 'Europe/Moscow'), 'dd.MM.yyyy HH:mm')}
+                    {format(new Date(message.timestamp), 'dd.MM.yyyy HH:mm', {
+                      timeZone: 'Europe/Moscow',
+                    })}                  
                   </span>
                 </div>
               </div>
