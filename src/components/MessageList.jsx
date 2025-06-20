@@ -359,7 +359,22 @@ function MessageList() {
                 
                 <div className="message-footer">
                   <span className="message-date">
-                     {new Date(message.timestamp)}
+                    {(() => {
+                      const timestamp = message.timestamp;
+                      const cleanTimestamp = `${timestamp.slice(0, 10)}T${timestamp.slice(11)}Z`;
+                      const date = new Date(cleanTimestamp);
+
+                      if (isNaN(date.getTime())) return '—'; // Проверка на валидность даты
+
+                      return new Intl.DateTimeFormat('ru-RU', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        timeZone: 'Europe/Moscow'
+                      }).format(date);
+                    })()}
                   </span>
                 </div>
               </div>
