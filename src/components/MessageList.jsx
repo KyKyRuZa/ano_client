@@ -359,16 +359,26 @@ function MessageList() {
                 
                 <div className="message-footer">
                 <span className="message-date">
-                  {new Date(`${message.timestamp.slice(0, 10)}T${message.timestamp.slice(11)}Z`)
-                    .toLocaleString('ru-RU', {
+                  {(() => {
+                    const dateStr = message.timestamp;
+                    const [datePart, timePart] = dateStr.split(' ');
+                    const [year, month, day] = datePart.split('-');
+                    const [hours, minutes] = timePart.split(':').slice(0, 2);
+
+                    // Создаем объект Date как если бы это было время в часовом поясе МСК
+                    const moscowDate = new Date(
+                      Date.UTC(year, month - 1, day, hours, minutes)
+                    );
+
+                    return new Intl.DateTimeFormat('ru-RU', {
                       day: '2-digit',
                       month: '2-digit',
                       year: 'numeric',
                       hour: '2-digit',
                       minute: '2-digit',
                       timeZone: 'Europe/Moscow'
-                    })
-                  } 
+                    }).format(moscowDate);
+                  })()}
                 </span>
               </div>
               </div>
