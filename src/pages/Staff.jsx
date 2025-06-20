@@ -56,10 +56,7 @@ const StaffPage = () => {
             <div key={member.id} className="staff-card">
               <div className="staff-card-avatar">
                 {member.media ? (
-                  <img 
-                    src={member.media}
-                    alt={member.fullname} 
-                  />
+                  <img src={`https://anotsenimzhizn.ru${member.media}`}  alt={member.fullname} />
                 ) : (
                   <FontAwesomeIcon icon={faUser} className="default-avatar" />
                 )}
