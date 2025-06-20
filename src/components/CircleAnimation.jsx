@@ -92,7 +92,7 @@ const CircleAnimation = ({ onComplete, timeout = 10000 }) => {
       const ctx = canvas.getContext('2d');
 
       startTimeRef.current = Date.now();
-      const animationDuration = 3000;
+      const animationDuration = 6000;
 
       const textTop = 'Светя другим, сгораю сам'.split('').reverse().join('');
       const textBottom = 'Aliis intervendo consumer cam'.split('').reverse().join('');
