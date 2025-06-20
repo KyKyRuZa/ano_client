@@ -358,17 +358,19 @@ function MessageList() {
                 {message.text && <p className="message-text">{message.text}</p>}
                 
                 <div className="message-footer">
-                  <span className="message-date">
-                     {new Date(message.timestamp).toLocaleString('ru-RU', {
+                <span className="message-date">
+                  {new Date(`${message.timestamp.slice(0, 10)}T${message.timestamp.slice(11)}Z`)
+                    .toLocaleString('ru-RU', {
                       day: '2-digit',
-                      month: '2-digit', 
+                      month: '2-digit',
                       year: 'numeric',
                       hour: '2-digit',
                       minute: '2-digit',
                       timeZone: 'Europe/Moscow'
-                    })}
-                  </span>
-                </div>
+                    })
+                  } 
+                </span>
+              </div>
               </div>
             </div>
           ))}
