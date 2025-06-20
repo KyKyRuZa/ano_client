@@ -70,7 +70,7 @@ const Programs = () => {
                         <div className='detail-header'>
                             {program.media && (
                             <div className="detail-image">
-                                <img src={`https://anotsenimzhizn.ru/${program.media}`} alt={program.title} />
+                                <img src={`https://anotsenimzhizn.ru${program.media}`} alt={program.title} />
                             </div>
                             )} 
                             <h1 className="detail-title">{program.title}</h1>
