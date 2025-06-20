@@ -92,10 +92,10 @@ const CircleAnimation = ({ onComplete, timeout = 10000 }) => {
       const ctx = canvas.getContext('2d');
 
       startTimeRef.current = Date.now();
-      const animationDuration = 3000;
+      const animationDuration = 5000;
 
       const textTop = 'Светя другим, сгораю сам'.split('').reverse().join('');
-      const textBottom = 'Aliis intervendo consumer cam';
+      const textBottom = 'Aliis intervendo consumer cam'.split('').reverse().join('');
       const radius = 150;
       const topStartAngle = Math.PI / 12;
       const topEndAngle = (11 / 12) * Math.PI;
