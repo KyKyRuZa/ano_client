@@ -48,28 +48,14 @@ const StaffProfilePage = () => {
             )}
           </div>
 
-          <div className="staff-profile-content">
+          <div className="staff-profile-content" lang="ru">
             <h2>{member.fullname}</h2>
-            <p><strong>Должность:</strong> {member.position}</p>
-            <p><strong>Отдел:</strong> {member.callsign || 'Не указан'}</p>
+            <p className='staff-profile-position'><strong>Должность:</strong> {member.position}</p>
+            <p className='staff-profile-callsign'><strong>Отдел:</strong> {member.callsign || 'Не указан'}</p>
             {member.description && (
               <div className="staff-profile-description">
                 <h4>О сотруднике</h4>
                 <p>{member.description}</p>
-              </div>
-            )}
-
-            {member.education && (
-              <div className="staff-profile-education">
-                <h4>Образование</h4>
-                <p>{member.education}</p>
-              </div>
-            )}
-
-            {member.experience && (
-              <div className="staff-profile-experience">
-                <h4>Опыт работы</h4>
-                <p>{member.experience}</p>
               </div>
             )}
           </div>
