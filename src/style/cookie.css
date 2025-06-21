@@ -5,7 +5,7 @@
   right: 0;
   background-color: #ffffff;
   color: #333333;
-  padding: 1rem 1.5rem;
+  padding: 1rem;
   z-index: 99999;
   box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.1);
   display: flex;
@@ -28,8 +28,6 @@
   margin-bottom: 1rem;
   font-size: 0.95rem;
   line-height: 1.4;
-  width: 1200px;
-  margin: 0 auto;
 }
 
 .cookie-actions,
@@ -37,21 +35,19 @@
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
-  width: 100%;
   margin-bottom: 0.5rem;
-  width: 1200px;
-  margin: 10px auto;
 }
 
 .cookie-actions button,
 .settings-actions button {
-  padding: 0.5rem 1rem;
+  padding: 0.6rem 1rem;
   font-size: 0.9rem;
   cursor: pointer;
   border: none;
   border-radius: 6px;
   transition: background-color 0.3s ease, transform 0.2s ease;
   white-space: nowrap;
+  min-width: 120px;
 }
 
 .cookie-actions button:hover,
@@ -59,19 +55,22 @@
   transform: scale(1.05);
 }
 
-.cookie-actions button:first-child {
+.cookie-actions button:first-child,
+.settings-actions button:first-child {
   background-color: #007bff;
   color: #fff;
 }
 
-.settings-actions button {
+.settings-actions button:not(:first-child) {
   background-color: #f0f0f0;
   color: #333;
 }
+
 .cookie-settings {
-    max-width: 1200px;
-    margin: 0 auto;
+  max-width: 100%;
+  margin: 0 auto;
 }
+
 .cookie-settings label {
   display: block;
   margin: 0.75rem 0;
@@ -79,24 +78,32 @@
   text-align: left;
   cursor: pointer;
 }
-.settings-actions button:first-child {
-  background-color: #007bff;
-  color: #fff;
-}
+
 .cookie-settings input[type="checkbox"] {
   margin-right: 0.5rem;
-  transform: scale(1.1);
+  transform: scale(1.2);
 }
 
-@media (max-width: 600px) {
+/* Мобильные стили */
+@media (max-width: 768px) {
   .cookie-banner {
-    padding: 1rem 1rem;
+    padding: 1rem 0.8rem;
     font-size: 0.85rem;
+  }
+
+  .cookie-actions,
+  .settings-actions {
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .cookie-actions button,
   .settings-actions button {
-    flex: 1 1 100%;
-    max-width: 100%;
+    width: 100%;
+    text-align: center;
+  }
+
+  .cookie-banner p {
+    font-size: 0.85rem;
   }
 }
