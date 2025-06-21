@@ -1,18 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, matchPath } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+  matchPath,
+} from 'react-router-dom';
+
 import Home from './pages/Home';
 import Project from './pages/Project';
 import Programs from './pages/Programs';
 import StaffPage from './pages/Staff';
 import AdminLayout from './pages/Admin';
-import ScrollToTop from './components/ScrollToUp';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import UserAgreement from './pages/UserAgreement';
 import Disclaimer from './components/Disclaimer';
-import CircleAnimation from './components/CircleAnimation';
 import NotFound from './pages/NotFound';
 import StaffProfilePage from './pages/StaffProfile';
 
+import ScrollToTop from './components/ScrollToUp';
+import CircleAnimation from './components/CircleAnimation';
+
+import { CookieProvider } from './context/CookieContext';
 
 const AppContent = () => {
   const [isAnimationComplete, setIsAnimationComplete] = useState(false);
@@ -20,7 +30,7 @@ const AppContent = () => {
   const location = useLocation();
 
   const isAdminRoute = location.pathname.startsWith('/admin');
-  
+
   const validRoutes = [
     { path: '/', exact: true },
     { path: '/user-agreement', exact: true },
@@ -30,10 +40,10 @@ const AppContent = () => {
     { path: '/program/:id', exact: false },
     { path: '/personal/:id', exact: false },
     { path: '/admin', exact: true },
-    { path: '/admin/*', exact: false }
+    { path: '/admin/*', exact: false },
   ];
 
-  const isValidRoute = validRoutes.some(route => 
+  const isValidRoute = validRoutes.some((route) =>
     matchPath({ path: route.path, exact: route.exact }, location.pathname)
   );
 
@@ -69,7 +79,7 @@ const AppContent = () => {
         return () => clearTimeout(animationTimeout);
       }
     }
-  }, [isAdminRoute, location, isNotFoundPage]);
+  }, [isAdminRoute, location, isNotFoundPage, isAnimationComplete]);
 
   const handleAnimationComplete = () => {
     setIsAnimationComplete(true);
@@ -92,10 +102,7 @@ const AppContent = () => {
         !isNotFoundPage &&
         isDisclaimerConfirmed &&
         !isAnimationComplete && (
-          <CircleAnimation 
-            onComplete={handleAnimationComplete} 
-            timeout={10000}
-          />
+          <CircleAnimation onComplete={handleAnimationComplete} timeout={10000} />
         )}
 
       {(isAdminRoute || isNotFoundPage || (isDisclaimerConfirmed && isAnimationComplete)) && (
@@ -107,8 +114,8 @@ const AppContent = () => {
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/project/:id" element={<Project />} />
               <Route path="/program/:id" element={<Programs />} />
-              <Route path="/personal/:id" element={<StaffProfilePage/>} />
-              <Route path="/personal/" element={<StaffPage/>} />
+              <Route path="/personal/:id" element={<StaffProfilePage />} />
+              <Route path="/personal" element={<StaffPage />} />
               <Route path="/admin" element={<Navigate to="/admin/projects" replace />} />
               <Route path="/admin/*" element={<AdminLayout />} />
               <Route path="*" element={<NotFound />} />
@@ -123,7 +130,9 @@ const AppContent = () => {
 function App() {
   return (
     <Router>
-      <AppContent />
+      <CookieProvider>
+        <AppContent />
+      </CookieProvider>
     </Router>
   );
 }

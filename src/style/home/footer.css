@@ -118,7 +118,7 @@
 /* Нижняя секция с копирайтом и ссылками */
 .social-icons {
   position: absolute;
-  bottom: 24px;
+  bottom: 0;
   left: 0;
   right: 0;
   display: flex;
@@ -140,8 +140,6 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  z-index: 11; /* Добавлено */
-  position: relative; /* Добавлено */
 }
 
 .footer-links a {
@@ -151,6 +149,31 @@
   font-weight: 500;
   transition: all 0.3s ease;
   border-radius: 4px;
-  position: relative; /* Добавлено */
-  z-index: 12; /* Добавлено */
+}
+
+.footer-links a:hover {
+  opacity: 0.85;
+}
+
+/* Блок с юридическим уведомлением о файлах cookie */
+.cookie-disclaimer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 32px 24px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.cookie-disclaimer p {
+  margin: 0;
+}
+
+.cookie-disclaimer a {
+  color: #fff;
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+.cookie-disclaimer a:hover {
+  text-decoration: none;
 }

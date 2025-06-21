@@ -6,6 +6,7 @@ import About from '../components/About';
 import MessageList from '../components/MessageList';
 import Header from '../components/ux/Header';
 import Footer from '../components/ux/Footer';
+import CookieBanner from '../components/CookieBanner';
 
 import '../style/global.css'
 import '../style/home/header.css'
@@ -17,6 +18,7 @@ const Home = () => {
     <>
       <Header/>
       <div>
+        <CookieBanner/>
         <HeroSection />
         <About />
         <MessageList/>

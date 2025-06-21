@@ -5,9 +5,8 @@ import rutub from '../../style/assets/Rutube_icon.svg';
 import QR from '../../style/assets/QR.png';
 import KUI from '../../style/assets/KUI.png';
 
-
 const Footer = () => {
-  return(
+  return (
     <footer className="footer">
       <div className="footer-container">
         <div className="footer-left">
@@ -15,26 +14,24 @@ const Footer = () => {
           <p>Сайт создан студентами университета Казанский инновационный университет имени В.Г. Тимирясова (ИЭУП)</p>
           <span>Социальные сети АНБО:</span>
           <div className="footer-social">
-             
-            <a href="https://t.me/cenim_zhizn" target="_blank" rel="noopener noreferrer">
+            <a href="https://t.me/cenim_zhizn"  target="_blank" rel="noopener noreferrer">
               <FontAwesomeIcon icon={faTelegram} />
             </a>
-            <a href="https://vk.com/club216517939" target="_blank" rel="noopener noreferrer">
+            <a href="https://vk.com/club216517939"  target="_blank" rel="noopener noreferrer">
               <FontAwesomeIcon icon={faVk} />
             </a>
-            <a href="https://www.youtube.com/@tsenim_zhizn" target="_blank" rel="noopener noreferrer">
+            <a href="https://www.youtube.com/@tsenim_zhizn"  target="_blank" rel="noopener noreferrer">
               <FontAwesomeIcon icon={faYoutube} />
             </a>
-            <a href="https://rutube.ru/channel/60739870/">
-                <img src={rutub} alt="rutube" className="rutube" />
+            <a href="https://rutube.ru/channel/60739870/"  target="_blank" rel="noopener noreferrer">
+              <img src={rutub} alt="rutube" className="rutube" />
             </a>
           </div>
-          
         </div>
-       
-        <div className='QR-container'> 
-          <img src={QR} alt="QR" className="footer-QR" />
-          <p>пожертвовать</p>
+
+        <div className="QR-container">
+          <img src={QR} alt="QR-код для пожертвований" className="footer-QR" />
+          <p>Помочь проекту через QR-код</p>
         </div>
 
         <div className="footer-right">
@@ -64,6 +61,12 @@ const Footer = () => {
           </div>
         </div>
       </div>
+      <div className="cookie-disclaimer">
+        <p>
+          Настоящий сайт использует файлы cookie и аналогичные технологии для обеспечения работы сайта,
+          анализа посещаемости и взаимодействия со сторонними сервисами
+        </p>
+      </div>
 
       <div className="social-icons">
         <p>© 2025 АНБО "Ценим жизнь"</p>
@@ -71,7 +74,5 @@ const Footer = () => {
     </footer>
   );
 };
-
-
 
 export default Footer;
