@@ -18,6 +18,7 @@ import UserAgreement from './pages/UserAgreement';
 import Disclaimer from './components/Disclaimer';
 import NotFound from './pages/NotFound';
 import StaffProfilePage from './pages/StaffProfile';
+import Product from './pages/Product';
 
 import ScrollToTop from './components/ScrollToUp';
 import CircleAnimation from './components/CircleAnimation';
@@ -38,6 +39,7 @@ const AppContent = () => {
     { path: '/personal/', exact: true },
     { path: '/project/:id', exact: false },
     { path: '/program/:id', exact: false },
+    { path: '/product/:id', exact: false },
     { path: '/personal/:id', exact: false },
     { path: '/admin', exact: true },
     { path: '/admin/*', exact: false },
@@ -114,8 +116,9 @@ const AppContent = () => {
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/project/:id" element={<Project />} />
               <Route path="/program/:id" element={<Programs />} />
+              <Route path="/product/:id" element={<Product/>} />
               <Route path="/personal/:id" element={<StaffProfilePage />} />
-              <Route path="/personal" element={<StaffPage />} />
+              <Route path="/personal/" element={<StaffPage />} />
               <Route path="/admin" element={<Navigate to="/admin/projects" replace />} />
               <Route path="/admin/*" element={<AdminLayout />} />
               <Route path="*" element={<NotFound />} />
