@@ -70,7 +70,7 @@ const Products = () => {
                         <div className='detail-header'>
                             {product.media && (
                             <div className="detail-image">
-                                <img src={`http://localhost:8000/${product.media}`} alt={product.title} />
+                                <img src={`https://anotsenimzhizn.ru${product.media}`} alt={product.title} />
                             </div>
                             )} 
                             <h1 className="detail-title">{product.title}</h1>
