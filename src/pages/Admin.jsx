@@ -7,6 +7,7 @@ import authApi from '../api/auth';
 import StaffPage from './AdminPages/StaffPage';
 import ProgramsPage from './AdminPages/ProgramsPage';
 import ProjectsPage from './AdminPages/ProjectsPage';
+import ProductPage from './AdminPages/ProductPage';
 import Login from '../components/Login';
 
 const NavItem = ({ text, path, onClick }) => {
@@ -29,6 +30,7 @@ const Navbar = ({ isOpen, toggleMenu }) => {
     { text: 'Проекты', path: '/admin/projects' },
     { text: 'Программы', path: '/admin/programs' },
     { text: 'Персонал', path: '/admin/staff' },
+    { text: 'Продукт', path: '/admin/products' },
    
   ];
 
@@ -129,6 +131,7 @@ const AdminLayout = () => {
               <Route path="staff" element={<StaffPage />} />
               <Route path="programs" element={<ProgramsPage />} />
               <Route path="projects" element={<ProjectsPage />} />
+              <Route path="products" element={<ProductPage />} />
             </Routes>
           </div>
         )}
